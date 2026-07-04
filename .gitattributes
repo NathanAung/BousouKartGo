@@ -1,0 +1,4 @@
+
+# Third-party code
+/[Aa]ssets/[Pp]lugins/** linguist-vendored
+/[Aa]ssets/TextMesh Pro/** linguist-vendored
