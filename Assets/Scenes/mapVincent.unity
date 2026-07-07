@@ -226,7 +226,7 @@ Transform:
   m_GameObject: {fileID: 7213271}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.6, y: 4.68, z: -20.80357}
+  m_LocalPosition: {x: -11.6, y: 5, z: -20.80357}
   m_LocalScale: {x: 15, y: 15, z: 15}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -428,11 +428,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 29329846cfba2476b8bf9799274ac5a4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -25.827
+      value: -25.16
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 29329846cfba2476b8bf9799274ac5a4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.677
+      value: 6.69
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 29329846cfba2476b8bf9799274ac5a4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -822,6 +822,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: resetDelay
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: layerMask.m_Bits
       value: 64
       objectReference: {fileID: 0}
@@ -832,6 +836,10 @@ PrefabInstance:
     - target: {fileID: 1129662765231283693, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_Name
       value: player (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1129662765231283693, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 3133100076418222653, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1067,6 +1075,14 @@ PrefabInstance:
     - target: {fileID: 7267583086349385398, guid: d967099a0053240e48ab54559c966941, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 8065045487149104633, guid: d967099a0053240e48ab54559c966941, type: 3}
+      propertyPath: m_TagString
+      value: ResetZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698173749525783407, guid: d967099a0053240e48ab54559c966941, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
