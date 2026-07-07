@@ -11,23 +11,18 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null) return;
 
-        Vector3 desiredPosition = target.position + target.rotation * offset;
+        // Calculate the ideal position relative to target's rotation
+        Vector3 desiredPosition = target.position + (target.rotation * offset);
 
-        transform.position = Vector3.Lerp(
-            transform.position,
-            desiredPosition,
-            positionSmooth * Time.deltaTime
-        );
+        // Frame-rate independent smoothing factors
+        float posT = 1f - Mathf.Exp(-positionSmooth * Time.deltaTime);
+        float rotT = 1f - Mathf.Exp(-rotationSmooth * Time.deltaTime);
 
-        Quaternion desiredRotation = Quaternion.LookRotation(
-            target.position - transform.position,
-            Vector3.up
-        );
+        // Smoothly position the camera
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, posT);
 
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            desiredRotation,
-            rotationSmooth * Time.deltaTime
-        );
+        // Smoothly rotate the camera to look at the target
+        Quaternion desiredRotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotT);
     }
 }
