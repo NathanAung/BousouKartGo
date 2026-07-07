@@ -15,15 +15,24 @@ public class playerController : MonoBehaviour
     RaycastHit hit;
     public InputAction move;
     float maxSteerAngle = 20f;
+    public InputAction drift;
+    bool isDrifting = false;
+
+    [SerializeField] ParticleSystem driftSmokeLeftTurn1;
+    [SerializeField] ParticleSystem driftSmokeLeftTurn2;
+    [SerializeField] ParticleSystem driftSmokeRightTurn1;
+    [SerializeField] ParticleSystem driftSmokeRightTurn2;
 
     private void OnEnable()
     {
         move.Enable();
+        drift.Enable();
     }
 
     private void OnDisable()
     {
         move.Disable();
+        drift.Disable();
     }
 
 
@@ -31,14 +40,18 @@ public class playerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        //boxCollider = GetComponent<BoxCollider>();
-    }
 
+        InitSmoke(driftSmokeLeftTurn1);
+        InitSmoke(driftSmokeLeftTurn2);
+        InitSmoke(driftSmokeRightTurn1);
+        InitSmoke(driftSmokeRightTurn2);
+    }
     // Update is called once per frame
     void Update()
     {
         GetInput();
         CheckPosition();
+        UpdateEffects();
     }
 
     void FixedUpdate()
@@ -58,13 +71,23 @@ public class playerController : MonoBehaviour
 
         //verticalInput = Input.GetAxis("Vertical");
         Debug.Log($"{horizontalInput}");
+
+        isDrifting = drift.IsPressed();
     }
 
     void MoveCar()
     {
         rb.AddForce(orientation.forward * 750f * Time.fixedDeltaTime, ForceMode.Force);
         float yaw = rb.rotation.eulerAngles.y;
-        yaw += horizontalInput * 50f * Time.fixedDeltaTime;
+        if (isDrifting)
+        {
+            yaw += horizontalInput * 100f * Time.fixedDeltaTime;
+        }
+        else
+        {
+            yaw += horizontalInput * 50f * Time.fixedDeltaTime;
+        }
+        
 
         Quaternion uprightRotation = Quaternion.Euler(0f, yaw, 0f);
         rb.MoveRotation(uprightRotation);
@@ -115,10 +138,57 @@ public class playerController : MonoBehaviour
 
     void UpdateWheels()
     {
-        float steer = horizontalInput * maxSteerAngle;
+        float steer;
 
-        wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
+        if (isDrifting)
+        {
+            steer = -horizontalInput * maxSteerAngle * 1.5f;
+        }
+        else 
+        {
+            steer = horizontalInput * maxSteerAngle;
+        }
+
+
+
+
+            wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
         wheel2.localRotation = Quaternion.Euler(0f, steer, 0f);
     }
 
+
+    
+
+    void InitSmoke(ParticleSystem smoke)
+    {
+        if (!smoke) return;
+
+        var emission = smoke.emission;
+        emission.enabled = false;
+
+        if (!smoke.isPlaying)
+        {
+            smoke.Play();
+        }
+    }
+
+    void UpdateEffects()
+    {
+        bool driftingRight = isDrifting && horizontalInput > 0.1f;
+        bool driftingLeft = isDrifting && horizontalInput < -0.1f;
+
+        SetSmoke(driftSmokeRightTurn1, driftingRight);
+        SetSmoke(driftSmokeRightTurn2, driftingRight);
+
+        SetSmoke(driftSmokeLeftTurn1, driftingLeft);
+        SetSmoke(driftSmokeLeftTurn2, driftingLeft);
+    }
+
+    void SetSmoke(ParticleSystem smoke, bool shouldPlay)
+    {
+        if (!smoke) return;
+
+        var emission = smoke.emission;
+        emission.enabled = shouldPlay;
+    }
 }
