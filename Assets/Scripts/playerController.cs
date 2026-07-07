@@ -75,7 +75,7 @@ public class playerController : MonoBehaviour
 
         
 
-        if (transform.position.y < 5f)
+        if (transform.position.y < 5.75f)
         {
             ResetCar();
         }
