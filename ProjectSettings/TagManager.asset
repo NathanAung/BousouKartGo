@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - OutOfTrackBounds
+  - StillObj
+  - MovingObj
   - ResetZone
   layers:
   - Default
@@ -14,7 +16,7 @@ TagManager:
   - Water
   - UI
   - Track
-  - 
+  - Debris
   - 
   - 
   - 
