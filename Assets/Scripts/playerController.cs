@@ -64,7 +64,7 @@ public class playerController : MonoBehaviour
     {
         rb.AddForce(orientation.forward * 750f * Time.fixedDeltaTime, ForceMode.Force);
         float yaw = rb.rotation.eulerAngles.y;
-        yaw += horizontalInput * 100f * Time.fixedDeltaTime;
+        yaw += horizontalInput * 50f * Time.fixedDeltaTime;
 
         Quaternion uprightRotation = Quaternion.Euler(0f, yaw, 0f);
         rb.MoveRotation(uprightRotation);
