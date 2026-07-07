@@ -14,7 +14,7 @@ public class playerController : MonoBehaviour
     Vector3 safePosition;
     RaycastHit hit;
     public InputAction move;
-    float maxSteerAngle = 30f;
+    float maxSteerAngle = 20f;
 
     private void OnEnable()
     {
