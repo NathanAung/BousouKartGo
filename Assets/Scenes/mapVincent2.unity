@@ -911,11 +911,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: maxSpeed
-      value: 2.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: resetDelay
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: acceleration
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 223920291851324845, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: accelerateForce
@@ -927,7 +931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 689656412575147504, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_Mass
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 689656412575147504, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_Constraints

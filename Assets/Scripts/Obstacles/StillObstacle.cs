@@ -35,11 +35,18 @@ public class StillObstacle : MonoBehaviour
             gameObject.layer = LayerMask.NameToLayer("Debris");
 
             // Slow down the player (Brake)
-            Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
-            if (playerRb != null)
+
+            playerController player = collision.gameObject.GetComponent<playerController>();
+
+            if (player != null)
             {
-                playerRb.linearVelocity *= playerSpeedMultiplier;
+                player.MultiplySpeed(playerSpeedMultiplier);
             }
+            //Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
+            //if (playerRb != null)
+            //{
+            //    playerRb.linearVelocity *= playerSpeedMultiplier;
+            //}
 
             // Calculate the blow-away direction
             // Subtracting player position from our position gives us the exact vector pointing away from the impact

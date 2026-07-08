@@ -22,10 +22,23 @@ public class ExplosiveBarrel : MonoBehaviour
                 playerRb.linearVelocity *= playerSpeedMultiplier;
             }
 
-            // Spawn the visual explosion (if assigned)
+
+            // Spawn the visual explosion
             if (explosionEffectPrefab != null)
             {
-                Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+                GameObject effect = Instantiate(
+                    explosionEffectPrefab,
+                    transform.position,
+                    Quaternion.identity
+                );
+
+                ParticleSystem ps = effect.GetComponentInChildren<ParticleSystem>();
+
+                if (ps != null)
+                {
+                    ps.Play();
+                    Destroy(effect, ps.main.duration + ps.main.startLifetime.constantMax);
+                }
             }
 
             // AoE Physics Explosion
@@ -40,6 +53,7 @@ public class ExplosiveBarrel : MonoBehaviour
                 if (nearbyRb != null)
                 {
                     nearbyRb.AddExplosionForce(explosionForce, transform.position, explosionRadius, upwardModifier, ForceMode.Impulse);
+
                 }
             }
 

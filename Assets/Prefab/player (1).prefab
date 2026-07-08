@@ -83,6 +83,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   maxSpeed: 2
+  acceleration: 8
   wheel1: {fileID: 8372397789378013436}
   wheel2: {fileID: 7363160731561910685}
   move:
@@ -158,10 +159,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1046717
-  m_Height: 0.67255116
+  m_Radius: 0.12078
+  m_Height: 0.77685267
   m_Direction: 2
-  m_Center: {x: 0, y: 0.10296798, z: -0.087428294}
+  m_Center: {x: 0, y: 0.10296798, z: -0.1395793}
 --- !u!1001 &403229617662561999
 PrefabInstance:
   m_ObjectHideFlags: 0

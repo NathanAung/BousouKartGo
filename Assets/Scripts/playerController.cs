@@ -9,7 +9,8 @@ public class playerController : MonoBehaviour
     [SerializeField] Transform orientation;
     [SerializeField] LayerMask layerMask;
     [SerializeField] float maxSpeed = 200f;
-    [SerializeField] float accelerateForce = 750f;
+    [SerializeField] float acceleration = 8f;
+    float currentSpeed = 0f;
     [SerializeField] Transform wheel1;
     [SerializeField] Transform wheel2;
     Vector3 safePosition;
@@ -78,8 +79,23 @@ public class playerController : MonoBehaviour
 
     void MoveCar()
     {
-        rb.AddForce(orientation.forward * accelerateForce * Time.fixedDeltaTime, ForceMode.Force);
+        float speedPercent = currentSpeed / maxSpeed;
+
+        float accelMultiplier = Mathf.Pow(1f - speedPercent, 2f);
+
+        currentSpeed += acceleration * accelMultiplier * Time.fixedDeltaTime;
+        currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+
+        Vector3 moveVelocity = orientation.forward * currentSpeed;
+
+        rb.linearVelocity = new Vector3(
+            moveVelocity.x,
+            rb.linearVelocity.y,
+            moveVelocity.z
+        );
+
         float yaw = rb.rotation.eulerAngles.y;
+
         if (isDrifting)
         {
             yaw += horizontalInput * 100f * Time.fixedDeltaTime;
@@ -88,31 +104,20 @@ public class playerController : MonoBehaviour
         {
             yaw += horizontalInput * 50f * Time.fixedDeltaTime;
         }
-        
 
         Quaternion uprightRotation = Quaternion.Euler(0f, yaw, 0f);
         rb.MoveRotation(uprightRotation);
 
-      
-
-        
-
-        if (transform.position.y < 5.95f)
+        if (transform.position.y < 5.96f)
         {
             ResetCar();
         }
-
-        if (rb.linearVelocity.magnitude > maxSpeed)
-        {
-            rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
-        }
-
-
-
     }
 
     void ResetCar()
     {
+        currentSpeed = 0f;
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
@@ -189,5 +194,13 @@ public class playerController : MonoBehaviour
 
         var emission = smoke.emission;
         emission.enabled = shouldPlay;
+    }
+
+    public void MultiplySpeed(float multiplier)
+    {
+        currentSpeed *= multiplier;
+
+        // Clamp just in case
+        currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
     }
 }

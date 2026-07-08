@@ -178,6 +178,14 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 7780509072056475218, guid: d0b50437efbe9df4a87515b48f499ab0, type: 3}
+      propertyPath: blowAwayForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7780509072056475218, guid: d0b50437efbe9df4a87515b48f499ab0, type: 3}
+      propertyPath: playerSpeedMultiplier
+      value: 0.6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 5687097744903880737, guid: d0b50437efbe9df4a87515b48f499ab0, type: 3}

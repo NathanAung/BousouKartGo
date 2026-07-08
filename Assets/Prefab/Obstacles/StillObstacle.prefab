@@ -186,5 +186,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StillObstacle
   blowAwayForce: 15
-  playerSpeedMultiplier: 0.7
+  playerSpeedMultiplier: 0.5
   upwardLift: 2
