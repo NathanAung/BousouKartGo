@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExplosiveBarrel
   explosionForce: 10
-  explosionRadius: 15
+  explosionRadius: 4
   upwardModifier: 3
   playerSpeedMultiplier: 0.1
   explosionEffectPrefab: {fileID: 0}

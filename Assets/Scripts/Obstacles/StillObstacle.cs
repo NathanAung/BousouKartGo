@@ -15,6 +15,15 @@ public class StillObstacle : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    void Update()
+    {
+        // automatically destroy the obstacle if it falls below a certain Y level (e.g., off the map)
+        if (transform.position.y < -10f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (hasBeenHit) return;
