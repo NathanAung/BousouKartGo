@@ -8,7 +8,8 @@ public class playerController : MonoBehaviour
     //BoxCollider boxCollider;
     [SerializeField] Transform orientation;
     [SerializeField] LayerMask layerMask;
-    [SerializeField] float maxSpeed = 13f;
+    [SerializeField] float maxSpeed = 200f;
+    [SerializeField] float accelerateForce = 750f;
     [SerializeField] Transform wheel1;
     [SerializeField] Transform wheel2;
     Vector3 safePosition;
@@ -77,7 +78,7 @@ public class playerController : MonoBehaviour
 
     void MoveCar()
     {
-        rb.AddForce(orientation.forward * 750f * Time.fixedDeltaTime, ForceMode.Force);
+        rb.AddForce(orientation.forward * accelerateForce * Time.fixedDeltaTime, ForceMode.Force);
         float yaw = rb.rotation.eulerAngles.y;
         if (isDrifting)
         {
@@ -92,9 +93,7 @@ public class playerController : MonoBehaviour
         Quaternion uprightRotation = Quaternion.Euler(0f, yaw, 0f);
         rb.MoveRotation(uprightRotation);
 
-        //Debug.Log(rb.velocity.magnitude);
-        if (rb.linearVelocity.magnitude > 13f)
-            rb.linearVelocity = rb.linearVelocity.normalized * 13f;
+      
 
         
 
