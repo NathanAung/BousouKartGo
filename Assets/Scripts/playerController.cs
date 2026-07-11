@@ -98,6 +98,17 @@ public class playerController : MonoBehaviour
 
     void MoveCar()
     {
+        if (isGrounded)
+        {
+            rb.constraints =
+                RigidbodyConstraints.FreezeRotationX |
+                RigidbodyConstraints.FreezeRotationZ;
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints.None;
+        }
+
         float speedPercent = currentSpeed / maxSpeed;
 
         float accelMultiplier = Mathf.Pow(1f - speedPercent, 2f);
@@ -208,7 +219,7 @@ public class playerController : MonoBehaviour
 
         safePositionTimer = 0f;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, layerMask))
+        if (Physics.Raycast(rb.position, Vector3.down, out hit, 10f, layerMask))
         {
             if (hit.collider.CompareTag("Track"))
             {
@@ -292,9 +303,6 @@ public class playerController : MonoBehaviour
         {
             steer = horizontalInput * maxSteerAngle;
         }
-
-
-
 
         wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
         wheel2.localRotation = Quaternion.Euler(0f, steer, 0f);
