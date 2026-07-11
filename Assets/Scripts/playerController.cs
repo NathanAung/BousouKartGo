@@ -5,7 +5,10 @@ public class playerController : MonoBehaviour
 {
     float horizontalInput = 0f;
     Rigidbody rb;
-    //BoxCollider boxCollider;
+
+    bool isGrounded = false;
+
+    CapsuleCollider capsuleCollider;
     [SerializeField] Transform orientation;
     [SerializeField] LayerMask layerMask;
     [SerializeField] float maxSpeed = 200f;
@@ -13,7 +16,21 @@ public class playerController : MonoBehaviour
     float currentSpeed = 0f;
     [SerializeField] Transform wheel1;
     [SerializeField] Transform wheel2;
-    Vector3 safePosition;
+    [SerializeField] Transform steeringWheel;
+
+    Vector3 prevSafePosition;
+    Vector3 latestSafePosition;
+
+    Quaternion prevSafeRotation;
+    Quaternion latestSafeRotation;
+
+    bool hasFirstSafePosition = false;
+    bool hasSecondSafePosition = false;
+
+    [SerializeField] float safePositionSaveInterval = 0.8f;
+    float safePositionTimer = 0f;
+
+
     RaycastHit hit;
     public InputAction move;
     float maxSteerAngle = 20f;
@@ -42,7 +59,6 @@ public class playerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
         InitSmoke(driftSmokeLeftTurn1);
         InitSmoke(driftSmokeLeftTurn2);
         InitSmoke(driftSmokeRightTurn1);
@@ -116,14 +132,51 @@ public class playerController : MonoBehaviour
 
     void ResetCar()
     {
-        currentSpeed = 0f;
-
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        currentSpeed = 0f;
 
-        rb.position = safePosition + Vector3.up * 0.5f;
+        Vector3 respawnPosition;
+        Quaternion respawnRotation;
 
-        rb.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        if (hasSecondSafePosition)
+        {
+            respawnPosition = Vector3.Lerp(
+                prevSafePosition,
+                latestSafePosition,
+                0.5f
+            );
+
+            respawnRotation = Quaternion.Slerp(
+                prevSafeRotation,
+                latestSafeRotation,
+                0.5f
+            );
+
+            if (Physics.Raycast(respawnPosition, Vector3.down, out hit, 10f, layerMask))
+            {
+                if (!hit.collider.CompareTag("Track"))
+                {
+                    respawnPosition = prevSafePosition;
+                    respawnRotation = prevSafeRotation;
+                }
+            }
+
+
+        }
+        else if (hasFirstSafePosition)
+        {
+            respawnPosition = latestSafePosition;
+            respawnRotation = latestSafeRotation;
+        }
+        else
+        {
+            Debug.LogWarning("No safe respawn position has been saved.");
+            return;
+        }
+
+        rb.position = respawnPosition;
+        rb.rotation = respawnRotation;
 
         rb.Sleep();
         rb.WakeUp();
@@ -131,13 +184,64 @@ public class playerController : MonoBehaviour
 
     void CheckPosition()
     {
+        safePositionTimer += Time.deltaTime;
+
+        if (safePositionTimer < safePositionSaveInterval || !isGrounded)
+            return;
+
+        safePositionTimer = 0f;
+
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 10f, layerMask))
         {
-            if (hit.collider != null && hit.collider.CompareTag("OutOfTrackBounds"))
+            if (hit.collider.CompareTag("Track"))
             {
-                safePosition = hit.point + Vector3.up * 1.5f;
+                SaveSafePosition(hit.point);
             }
         }
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.CompareTag("Track"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.CompareTag("Track"))
+        {
+            isGrounded = false;
+        }
+    }
+
+    void SaveSafePosition(Vector3 position)
+    {
+        Vector3 newSafePosition = position + Vector3.up * 1.5f;
+
+        Quaternion newSafeRotation = Quaternion.Euler(
+            0f,
+            rb.rotation.eulerAngles.y,
+            0f
+        );
+
+        if (!hasFirstSafePosition)
+        {
+            latestSafePosition = newSafePosition;
+            latestSafeRotation = newSafeRotation;
+
+            hasFirstSafePosition = true;
+            return;
+        }
+
+        prevSafePosition = latestSafePosition;
+        prevSafeRotation = latestSafeRotation;
+
+        latestSafePosition = newSafePosition;
+        latestSafeRotation = newSafeRotation;
+
+        hasSecondSafePosition = true;
     }
 
     void UpdateWheels()
@@ -156,8 +260,9 @@ public class playerController : MonoBehaviour
 
 
 
-            wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
+        wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
         wheel2.localRotation = Quaternion.Euler(0f, steer, 0f);
+        steeringWheel.localRotation = Quaternion.Euler(steer, 0f, 0f);
     }
 
 
@@ -196,6 +301,7 @@ public class playerController : MonoBehaviour
         emission.enabled = shouldPlay;
     }
 
+    //used to slow down player when encoutering obstacles
     public void MultiplySpeed(float multiplier)
     {
         currentSpeed *= multiplier;

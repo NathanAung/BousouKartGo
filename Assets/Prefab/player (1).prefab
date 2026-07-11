@@ -86,6 +86,8 @@ MonoBehaviour:
   acceleration: 8
   wheel1: {fileID: 8372397789378013436}
   wheel2: {fileID: 7363160731561910685}
+  steeringWheel: {fileID: 160116077596305561}
+  safePositionSaveInterval: 0.5
   move:
     m_Name: Move
     m_Type: 0
@@ -359,6 +361,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 771382227960839113}
   m_SourcePrefab: {fileID: 100100000, guid: 08e4ab8c50cfe5c4c9798d7ac48e5a2c, type: 3}
+--- !u!4 &160116077596305561 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 845814402212715677, guid: 08e4ab8c50cfe5c4c9798d7ac48e5a2c, type: 3}
+  m_PrefabInstance: {fileID: 685733579928941572}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1012903593805992943 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 08e4ab8c50cfe5c4c9798d7ac48e5a2c, type: 3}

@@ -8,6 +8,8 @@ TagManager:
   - StillObj
   - MovingObj
   - ResetZone
+  - FxTemporaire
+  - Track
   layers:
   - Default
   - TransparentFX
