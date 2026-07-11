@@ -38,6 +38,12 @@ public class GameManager : MonoBehaviour
                 car.lap.lapState = 0;
                 car.lap.lap += 1;
             }
+
+            if (car.lap.lap == 3)
+            {
+                // GAME WIN
+                Debug.Break();
+            }
         }
     }
 
