@@ -451,11 +451,11 @@ PrefabInstance:
       objectReference: {fileID: 1351295925}
     - target: {fileID: 6875199398524825035, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: offset.y
-      value: 0.333
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: 6875199398524825035, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: offset.z
-      value: -0.666
+      value: -0.54
       objectReference: {fileID: 0}
     - target: {fileID: 7082759741533227525, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: m_LocalPosition.x
