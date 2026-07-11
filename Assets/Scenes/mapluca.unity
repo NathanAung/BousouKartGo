@@ -503,11 +503,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: field of view
-      value: 26.991467
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: far clip plane
-      value: 30
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: m_TargetTexture
@@ -519,7 +519,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: m_projectionMatrixMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
