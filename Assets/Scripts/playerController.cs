@@ -7,6 +7,9 @@ public class playerController : MonoBehaviour
     Rigidbody rb;
 
     bool isGrounded = false;
+    bool isTouchingWall = false;
+    float resetTimer = 0f;
+    [SerializeField] float resetDelay = 2f;
 
     CapsuleCollider capsuleCollider;
     [SerializeField] Transform orientation;
@@ -128,6 +131,20 @@ public class playerController : MonoBehaviour
         {
             ResetCar();
         }
+
+        if (isTouchingWall)
+        {
+            resetTimer += Time.fixedDeltaTime;
+            if (resetTimer >= resetDelay)
+            {
+                ResetCar();
+                resetTimer = 0f;
+            }
+        }
+        else
+        {
+            resetTimer = 0f;
+        }
     }
 
     void ResetCar()
@@ -202,18 +219,37 @@ public class playerController : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.CompareTag("Track"))
+        if (!collision.collider.CompareTag("Track"))
+            return;
+
+        isGrounded = false;
+        isTouchingWall = false;
+
+        foreach (ContactPoint contact in collision.contacts)
         {
-            isGrounded = true;
+            Debug.DrawRay(contact.point, contact.normal, Color.red);
+
+            // Upward-facing contact = ground
+            if (contact.normal.y > 0.5f)
+            {
+                isGrounded = true;
+            }
+
+            // Mostly horizontal contact = wall, pillar, or track side
+            if (Mathf.Abs(contact.normal.y) < 0.5f)
+            {
+                isTouchingWall = true;
+            }
         }
     }
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.collider.CompareTag("Track"))
-        {
-            isGrounded = false;
-        }
+        if (!collision.collider.CompareTag("Track"))
+            return;
+
+        isGrounded = false;
+        isTouchingWall = false;
     }
 
     void SaveSafePosition(Vector3 position)
