@@ -27,7 +27,7 @@ public class ObstacleSpawner : MonoBehaviour
         Vector3 spawnPos = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
         // Instantiate the object and return it back to the Manager
-        return Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+        return Instantiate(prefabToSpawn, spawnPos, transform.rotation);
     }
 
 
