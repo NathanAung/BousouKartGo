@@ -14,6 +14,7 @@ public class playerController : MonoBehaviour
     CapsuleCollider capsuleCollider;
     [SerializeField] Transform orientation;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] LayerMask safeLayer;
     [SerializeField] float maxSpeed = 200f;
     [SerializeField] float acceleration = 8f;
     float currentSpeed = 0f;
@@ -169,28 +170,8 @@ public class playerController : MonoBehaviour
 
         if (hasSecondSafePosition)
         {
-            respawnPosition = Vector3.Lerp(
-                prevSafePosition,
-                latestSafePosition,
-                0.5f
-            );
-
-            respawnRotation = Quaternion.Slerp(
-                prevSafeRotation,
-                latestSafeRotation,
-                0.5f
-            );
-
-            if (Physics.Raycast(respawnPosition, Vector3.down, out hit, 10f, layerMask))
-            {
-                if (!hit.collider.CompareTag("Track"))
-                {
-                    respawnPosition = prevSafePosition;
-                    respawnRotation = prevSafeRotation;
-                }
-            }
-
-
+            respawnPosition = prevSafePosition;
+            respawnRotation = prevSafeRotation;
         }
         else if (hasFirstSafePosition)
         {
@@ -219,12 +200,10 @@ public class playerController : MonoBehaviour
 
         safePositionTimer = 0f;
 
-        if (Physics.Raycast(rb.position, Vector3.down, out hit, 10f, layerMask))
+        if (Physics.Raycast(rb.position, Vector3.down, out hit, 10f, safeLayer))
         {
-            if (hit.collider.CompareTag("Track"))
-            {
-                SaveSafePosition(hit.point);
-            }
+            SaveSafePosition(hit.point);
+            
         }
     }
 
