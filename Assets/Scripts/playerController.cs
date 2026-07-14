@@ -1,26 +1,61 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class playerController : MonoBehaviour
 {
-    float horizontalInput = 0f;
-    Rigidbody rb;
-
-    bool isGrounded = false;
-    bool isTouchingWall = false;
-    float resetTimer = 0f;
-    [SerializeField] float resetDelay = 2f;
-
-    CapsuleCollider capsuleCollider;
+    [Header("Core References")]
     [SerializeField] Transform orientation;
-    [SerializeField] LayerMask layerMask;
-    [SerializeField] LayerMask safeLayer;
+
+    Rigidbody rb;
+    CapsuleCollider capsuleCollider;
+    RaycastHit hit;
+
+
+    [Header("Input")]
+    public InputAction move;
+    public InputAction drift;
+    public InputAction boost;
+
+    float horizontalInput = 0f;
+    public bool IsDrifting = false;
+    public bool IsBoosting = false;
+
+
+    [Header("Movement")]
     [SerializeField] float maxSpeed = 200f;
     [SerializeField] float acceleration = 8f;
+    [SerializeField] float boostedMaxSpeed = 8f;
+    [SerializeField] float boostAcceleration = 2f;
+    [SerializeField] float boostSpeedDecay = 1.2f;
+
     float currentSpeed = 0f;
+
+
+    [Header("Steering Visuals")]
     [SerializeField] Transform wheel1;
     [SerializeField] Transform wheel2;
     [SerializeField] Transform steeringWheel;
+
+    float maxSteerAngle = 20f;
+
+
+    [Header("Ground and Wall Detection")]
+    [SerializeField] LayerMask layerMask;
+
+    bool isGrounded = false;
+    bool isTouchingWall = false;
+
+
+    [Header("Reset Settings")]
+    [SerializeField] float resetDelay = 2f;
+
+    float resetTimer = 0f;
+
+
+    [Header("Safe Position Saving")]
+    [SerializeField] LayerMask safeLayer;
+    [SerializeField] float safePositionSaveInterval = 0.8f;
 
     Vector3 prevSafePosition;
     Vector3 latestSafePosition;
@@ -31,36 +66,29 @@ public class playerController : MonoBehaviour
     bool hasFirstSafePosition = false;
     bool hasSecondSafePosition = false;
 
-    [SerializeField] float safePositionSaveInterval = 0.8f;
     float safePositionTimer = 0f;
 
+
+    [Header("Wind Effect")]
     [SerializeField] ParticleSystem windParticles;
     [SerializeField] float windMinimumSpeed = 50f;
 
-    RaycastHit hit;
-    public InputAction move;
-    float maxSteerAngle = 20f;
-    public InputAction drift;
-    bool isDrifting = false;
 
+    [Header("Drift Smoke Effects")]
     [SerializeField] ParticleSystem driftSmokeLeftTurn1;
     [SerializeField] ParticleSystem driftSmokeLeftTurn2;
     [SerializeField] ParticleSystem driftSmokeRightTurn1;
     [SerializeField] ParticleSystem driftSmokeRightTurn2;
 
-    public InputAction boost;
 
-    [SerializeField] float boostedMaxSpeed = 8f;
-    [SerializeField] float boostAcceleration = 2f;
-    [SerializeField] float boostSpeedDecay = 1.2f;
-
-    public bool IsBoosting;
-
+    [Header("Booster Effects")]
     [SerializeField] ParticleSystem booster1;
     [SerializeField] ParticleSystem booster2;
     [SerializeField] ParticleSystem booster3;
     [SerializeField] ParticleSystem booster4;
 
+
+    // Enables the player's input actions when this component becomes active.
     private void OnEnable()
     {
         move.Enable();
@@ -68,6 +96,8 @@ public class playerController : MonoBehaviour
         boost.Enable();
     }
 
+
+    // Disables the player's input actions when this component becomes inactive.
     private void OnDisable()
     {
         move.Disable();
@@ -76,21 +106,40 @@ public class playerController : MonoBehaviour
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Gets required components and prepares all particle effects.
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
         InitEffect(driftSmokeLeftTurn1);
         InitEffect(driftSmokeLeftTurn2);
         InitEffect(driftSmokeRightTurn1);
         InitEffect(driftSmokeRightTurn2);
         InitEffect(windParticles);
-        booster1.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        booster2.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        booster3.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        booster4.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        booster1.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
+
+        booster2.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
+
+        booster3.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
+
+        booster4.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
     }
-    // Update is called once per frame
+
+
+    // Reads input, saves safe positions, and updates visual effects each frame.
     void Update()
     {
         GetInput();
@@ -98,30 +147,37 @@ public class playerController : MonoBehaviour
         UpdateEffects();
     }
 
+
+    // Handles physics-based movement at a fixed interval.
     void FixedUpdate()
     {
         MoveCar();
-
     }
 
+
+    // Updates steering visuals after the car has moved.
     private void LateUpdate()
     {
         UpdateWheels();
     }
 
+
+    // Reads steering, drifting, and boosting input states.
     void GetInput()
     {
         horizontalInput = move.ReadValue<float>();
 
-        //verticalInput = Input.GetAxis("Vertical");
         Debug.Log($"{horizontalInput}");
 
-        isDrifting = drift.IsPressed();
+        IsDrifting = drift.IsPressed();
         IsBoosting = boost.IsPressed();
     }
 
+
+    // Controls acceleration, velocity, steering, rotation, and reset conditions.
     void MoveCar()
     {
+        // Lock the car upright while grounded and allow free rotation in the air.
         if (isGrounded)
         {
             rb.constraints =
@@ -133,9 +189,11 @@ public class playerController : MonoBehaviour
             rb.constraints = RigidbodyConstraints.None;
         }
 
+        // Accelerate toward the boosted maximum speed while boosting.
         if (IsBoosting)
         {
             float boostSpeedPercent = currentSpeed / boostedMaxSpeed;
+
             float boostAccelMultiplier = Mathf.Pow(
                 Mathf.Clamp01(1f - boostSpeedPercent),
                 2f
@@ -146,8 +204,13 @@ public class playerController : MonoBehaviour
                 boostAccelMultiplier *
                 Time.fixedDeltaTime;
 
-            currentSpeed = Mathf.Min(currentSpeed, boostedMaxSpeed);
+            currentSpeed = Mathf.Min(
+                currentSpeed,
+                boostedMaxSpeed
+            );
         }
+
+        // Gradually return to normal maximum speed after boosting.
         else if (currentSpeed > maxSpeed)
         {
             currentSpeed = Mathf.MoveTowards(
@@ -156,6 +219,8 @@ public class playerController : MonoBehaviour
                 boostSpeedDecay * Time.fixedDeltaTime
             );
         }
+
+        // Apply normal acceleration with reduced acceleration near maximum speed.
         else
         {
             float speedPercent = currentSpeed / maxSpeed;
@@ -165,12 +230,20 @@ public class playerController : MonoBehaviour
                 2f
             );
 
-            currentSpeed += acceleration * accelMultiplier * Time.fixedDeltaTime;
+            currentSpeed +=
+                acceleration *
+                accelMultiplier *
+                Time.fixedDeltaTime;
 
-            currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+            currentSpeed = Mathf.Min(
+                currentSpeed,
+                maxSpeed
+            );
         }
 
-        Vector3 moveVelocity = orientation.forward * currentSpeed;
+        // Apply forward movement while preserving vertical velocity.
+        Vector3 moveVelocity =
+            orientation.forward * currentSpeed;
 
         rb.linearVelocity = new Vector3(
             moveVelocity.x,
@@ -178,28 +251,40 @@ public class playerController : MonoBehaviour
             moveVelocity.z
         );
 
+        // Rotate the car horizontally using a faster turning speed while drifting.
         float yaw = rb.rotation.eulerAngles.y;
 
-        if (isDrifting)
+        if (IsDrifting)
         {
-            yaw += horizontalInput * 100f * Time.fixedDeltaTime;
+            yaw +=
+                horizontalInput *
+                100f *
+                Time.fixedDeltaTime;
         }
         else
         {
-            yaw += horizontalInput * 50f * Time.fixedDeltaTime;
+            yaw +=
+                horizontalInput *
+                50f *
+                Time.fixedDeltaTime;
         }
 
-        Quaternion uprightRotation = Quaternion.Euler(0f, yaw, 0f);
+        Quaternion uprightRotation =
+            Quaternion.Euler(0f, yaw, 0f);
+
         rb.MoveRotation(uprightRotation);
 
+        // Reset the car if it falls below the track.
         if (transform.position.y < 5.96f)
         {
             ResetCar();
         }
 
+        // Reset the car after it remains against a wall for too long.
         if (isTouchingWall)
         {
             resetTimer += Time.fixedDeltaTime;
+
             if (resetTimer >= resetDelay)
             {
                 ResetCar();
@@ -212,6 +297,8 @@ public class playerController : MonoBehaviour
         }
     }
 
+
+    // Restores the car to a previously saved safe position.
     void ResetCar()
     {
         rb.linearVelocity = Vector3.zero;
@@ -233,7 +320,10 @@ public class playerController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No safe respawn position has been saved.");
+            Debug.LogWarning(
+                "No safe respawn position has been saved."
+            );
+
             return;
         }
 
@@ -244,66 +334,49 @@ public class playerController : MonoBehaviour
         rb.WakeUp();
     }
 
+
+    // Periodically checks for valid ground beneath the car and saves its position.
     void CheckPosition()
     {
         safePositionTimer += Time.deltaTime;
 
-        if (safePositionTimer < safePositionSaveInterval || !isGrounded)
+        if (
+            safePositionTimer < safePositionSaveInterval ||
+            !isGrounded
+        )
+        {
             return;
+        }
 
         safePositionTimer = 0f;
 
-        if (Physics.Raycast(rb.position, Vector3.down, out hit, 10f, safeLayer))
+        if (
+            Physics.Raycast(
+                rb.position,
+                Vector3.down,
+                out hit,
+                10f,
+                safeLayer
+            )
+        )
         {
             SaveSafePosition(hit.point);
-
         }
     }
 
-    void OnCollisionStay(Collision collision)
-    {
-        if (!collision.collider.CompareTag("Track"))
-            return;
 
-        isGrounded = false;
-        isTouchingWall = false;
-
-        foreach (ContactPoint contact in collision.contacts)
-        {
-            Debug.DrawRay(contact.point, contact.normal, Color.red);
-
-            // Upward-facing contact = ground
-            if (contact.normal.y > 0.5f)
-            {
-                isGrounded = true;
-            }
-
-            // Mostly horizontal contact = wall, pillar, or track side
-            if (Mathf.Abs(contact.normal.y) < 0.5f)
-            {
-                isTouchingWall = true;
-            }
-        }
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (!collision.collider.CompareTag("Track"))
-            return;
-
-        isGrounded = false;
-        isTouchingWall = false;
-    }
-
+    // Stores the latest safe position while retaining the previous one.
     void SaveSafePosition(Vector3 position)
     {
-        Vector3 newSafePosition = position + Vector3.up * 1.5f;
+        Vector3 newSafePosition =
+            position + Vector3.up * 1.5f;
 
-        Quaternion newSafeRotation = Quaternion.Euler(
-            0f,
-            rb.rotation.eulerAngles.y,
-            0f
-        );
+        Quaternion newSafeRotation =
+            Quaternion.Euler(
+                0f,
+                rb.rotation.eulerAngles.y,
+                0f
+            );
 
         if (!hasFirstSafePosition)
         {
@@ -323,30 +396,89 @@ public class playerController : MonoBehaviour
         hasSecondSafePosition = true;
     }
 
+
+    // Detects whether the car is touching the ground or a track wall.
+    void OnCollisionStay(Collision collision)
+    {
+        if (!collision.collider.CompareTag("Track"))
+        {
+            return;
+        }
+
+        isGrounded = false;
+        isTouchingWall = false;
+
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            Debug.DrawRay(
+                contact.point,
+                contact.normal,
+                Color.red
+            );
+
+            if (contact.normal.y > 0.5f)
+            {
+                isGrounded = true;
+            }
+
+            if (Mathf.Abs(contact.normal.y) < 0.5f)
+            {
+                isTouchingWall = true;
+            }
+        }
+    }
+
+
+    // Clears ground and wall contact states after leaving the track.
+    void OnCollisionExit(Collision collision)
+    {
+        if (!collision.collider.CompareTag("Track"))
+        {
+            return;
+        }
+
+        isGrounded = false;
+        isTouchingWall = false;
+    }
+
+
+    // Rotates the wheel and steering-wheel visuals to match steering input.
     void UpdateWheels()
     {
         float steer;
 
-        if (isDrifting)
+        if (IsDrifting)
         {
-            steer = -horizontalInput * maxSteerAngle * 1.5f;
+            steer =
+                -horizontalInput *
+                maxSteerAngle *
+                1.5f;
         }
         else
         {
-            steer = horizontalInput * maxSteerAngle;
+            steer =
+                horizontalInput *
+                maxSteerAngle;
         }
 
-        wheel1.localRotation = Quaternion.Euler(0f, steer, 0f);
-        wheel2.localRotation = Quaternion.Euler(0f, steer, 0f);
-        steeringWheel.localRotation = Quaternion.Euler(steer, 0f, 0f);
+        wheel1.localRotation =
+            Quaternion.Euler(0f, steer, 0f);
+
+        wheel2.localRotation =
+            Quaternion.Euler(0f, steer, 0f);
+
+        steeringWheel.localRotation =
+            Quaternion.Euler(steer, 0f, 0f);
     }
 
 
-
-
+    // Initializes a looping particle effect with its emission disabled.
     void InitEffect(ParticleSystem smoke)
     {
-        if (!smoke) return;
+        if (!smoke)
+        {
+            return;
+        }
 
         var emission = smoke.emission;
         emission.enabled = false;
@@ -357,50 +489,103 @@ public class playerController : MonoBehaviour
         }
     }
 
+
+    // Updates drift smoke, wind, and booster effects based on the car's state.
     void UpdateEffects()
     {
         bool driftingRight =
             isGrounded &&
-            isDrifting &&
+            IsDrifting &&
             horizontalInput > 0.1f;
 
         bool driftingLeft =
             isGrounded &&
-            isDrifting &&
+            IsDrifting &&
             horizontalInput < -0.1f;
 
-        SetEffect(driftSmokeRightTurn1, driftingRight);
-        SetEffect(driftSmokeRightTurn2, driftingRight);
+        SetEffect(
+            driftSmokeRightTurn1,
+            driftingRight
+        );
 
-        SetEffect(driftSmokeLeftTurn1, driftingLeft);
-        SetEffect(driftSmokeLeftTurn2, driftingLeft);
+        SetEffect(
+            driftSmokeRightTurn2,
+            driftingRight
+        );
 
-        bool shouldShowWind = currentSpeed >= windMinimumSpeed;
+        SetEffect(
+            driftSmokeLeftTurn1,
+            driftingLeft
+        );
 
-        SetEffect(windParticles, shouldShowWind);
+        SetEffect(
+            driftSmokeLeftTurn2,
+            driftingLeft
+        );
 
-        SetBoosterEffect(booster1, IsBoosting);
-        SetBoosterEffect(booster2, IsBoosting);
-        SetBoosterEffect(booster3, IsBoosting);
-        SetBoosterEffect(booster4, IsBoosting);
+        bool shouldShowWind =
+            currentSpeed >= windMinimumSpeed;
+
+        SetEffect(
+            windParticles,
+            shouldShowWind
+        );
+
+        SetBoosterEffect(
+            booster1,
+            IsBoosting
+        );
+
+        SetBoosterEffect(
+            booster2,
+            IsBoosting
+        );
+
+        SetBoosterEffect(
+            booster3,
+            IsBoosting
+        );
+
+        SetBoosterEffect(
+            booster4,
+            IsBoosting
+        );
     }
 
-    void SetEffect(ParticleSystem smoke, bool shouldPlay)
+
+    // Enables or disables emission for a looping particle effect.
+    void SetEffect(
+        ParticleSystem smoke,
+        bool shouldPlay
+    )
     {
-        if (!smoke) return;
+        if (!smoke)
+        {
+            return;
+        }
 
         var emission = smoke.emission;
         emission.enabled = shouldPlay;
     }
 
-    void SetBoosterEffect(ParticleSystem effect, bool shouldPlay)
+
+    // Starts or completely clears a booster particle effect.
+    void SetBoosterEffect(
+        ParticleSystem effect,
+        bool shouldPlay
+    )
     {
-        if (!effect) return;
+        if (!effect)
+        {
+            return;
+        }
 
         if (shouldPlay)
         {
             if (!effect.isPlaying)
+            {
                 effect.Play(true);
+            }
         }
         else
         {
@@ -414,6 +599,8 @@ public class playerController : MonoBehaviour
         }
     }
 
+
+    // Multiplies the current speed while keeping it within the allowed range.
     public void MultiplySpeed(float multiplier)
     {
         currentSpeed *= multiplier;
@@ -425,3 +612,4 @@ public class playerController : MonoBehaviour
         );
     }
 }
+
