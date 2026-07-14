@@ -90,6 +90,7 @@ public class playerController : MonoBehaviour
     [SerializeField] ParticleSystem booster2;
     [SerializeField] ParticleSystem booster3;
     [SerializeField] ParticleSystem booster4;
+    [SerializeField] ParticleSystem booster5;
 
 
     // Enables the player's input actions when this component becomes active.
@@ -137,6 +138,11 @@ public class playerController : MonoBehaviour
         );
 
         booster4.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
+
+        booster5.Stop(
             true,
             ParticleSystemStopBehavior.StopEmittingAndClear
         );
@@ -552,6 +558,11 @@ public class playerController : MonoBehaviour
 
         SetBoosterEffect(
             booster4,
+            IsBoosting
+        );
+
+        SetBoosterEffect(
+            booster5,
             IsBoosting
         );
     }
