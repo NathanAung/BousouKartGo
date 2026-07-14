@@ -34,10 +34,12 @@ public class CameraFollow : MonoBehaviour
 
     playerController player;
     Vector3 currentOffset;
+    Vector3 offsetVelocity;
 
     void Start()
     {
         currentOffset = offset;
+        
 
         if (target != null)
         {
@@ -99,12 +101,11 @@ public class CameraFollow : MonoBehaviour
             currentSmooth = returnSmooth;
         }
 
-        float offsetT = 1f - Mathf.Exp(-currentSmooth * Time.deltaTime);
-
-        currentOffset = Vector3.Lerp(
+        currentOffset = Vector3.SmoothDamp(
             currentOffset,
             targetOffset,
-            offsetT);
+            ref offsetVelocity,
+            1f / currentSmooth);
 
         Vector3 desiredPosition =
             target.position + target.rotation * currentOffset;
