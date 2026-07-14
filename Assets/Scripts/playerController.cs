@@ -34,6 +34,8 @@ public class playerController : MonoBehaviour
     [SerializeField] float safePositionSaveInterval = 0.8f;
     float safePositionTimer = 0f;
 
+    [SerializeField] ParticleSystem windParticles;
+    [SerializeField] float windMinimumSpeed = 50f;
 
     RaycastHit hit;
     public InputAction move;
@@ -67,6 +69,7 @@ public class playerController : MonoBehaviour
         InitSmoke(driftSmokeLeftTurn2);
         InitSmoke(driftSmokeRightTurn1);
         InitSmoke(driftSmokeRightTurn2);
+        InitSmoke(windParticles);
     }
     // Update is called once per frame
     void Update()
@@ -314,6 +317,10 @@ public class playerController : MonoBehaviour
 
         SetSmoke(driftSmokeLeftTurn1, driftingLeft);
         SetSmoke(driftSmokeLeftTurn2, driftingLeft);
+
+        bool shouldShowWind =  currentSpeed >= windMinimumSpeed;
+
+        SetSmoke(windParticles, shouldShowWind);
     }
 
     void SetSmoke(ParticleSystem smoke, bool shouldPlay)
