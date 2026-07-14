@@ -48,16 +48,31 @@ public class playerController : MonoBehaviour
     [SerializeField] ParticleSystem driftSmokeRightTurn1;
     [SerializeField] ParticleSystem driftSmokeRightTurn2;
 
+    public InputAction boost;
+
+    [SerializeField] float boostedMaxSpeed = 8f;
+    [SerializeField] float boostAcceleration = 2f;
+    [SerializeField] float boostSpeedDecay = 1.2f;
+
+    public bool IsBoosting;
+
+    [SerializeField] ParticleSystem booster1;
+    [SerializeField] ParticleSystem booster2;
+    [SerializeField] ParticleSystem booster3;
+    [SerializeField] ParticleSystem booster4;
+
     private void OnEnable()
     {
         move.Enable();
         drift.Enable();
+        boost.Enable();
     }
 
     private void OnDisable()
     {
         move.Disable();
         drift.Disable();
+        boost.Disable();
     }
 
 
@@ -65,11 +80,15 @@ public class playerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        InitSmoke(driftSmokeLeftTurn1);
-        InitSmoke(driftSmokeLeftTurn2);
-        InitSmoke(driftSmokeRightTurn1);
-        InitSmoke(driftSmokeRightTurn2);
-        InitSmoke(windParticles);
+        InitEffect(driftSmokeLeftTurn1);
+        InitEffect(driftSmokeLeftTurn2);
+        InitEffect(driftSmokeRightTurn1);
+        InitEffect(driftSmokeRightTurn2);
+        InitEffect(windParticles);
+        booster1.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        booster2.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        booster3.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        booster4.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
     // Update is called once per frame
     void Update()
@@ -98,6 +117,7 @@ public class playerController : MonoBehaviour
         Debug.Log($"{horizontalInput}");
 
         isDrifting = drift.IsPressed();
+        IsBoosting = boost.IsPressed();
     }
 
     void MoveCar()
@@ -113,12 +133,42 @@ public class playerController : MonoBehaviour
             rb.constraints = RigidbodyConstraints.None;
         }
 
-        float speedPercent = currentSpeed / maxSpeed;
+        if (IsBoosting)
+        {
+            float boostSpeedPercent = currentSpeed / boostedMaxSpeed;
+            float boostAccelMultiplier = Mathf.Pow(
+                Mathf.Clamp01(1f - boostSpeedPercent),
+                2f
+            );
 
-        float accelMultiplier = Mathf.Pow(1f - speedPercent, 2f);
+            currentSpeed +=
+                boostAcceleration *
+                boostAccelMultiplier *
+                Time.fixedDeltaTime;
 
-        currentSpeed += acceleration * accelMultiplier * Time.fixedDeltaTime;
-        currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+            currentSpeed = Mathf.Min(currentSpeed, boostedMaxSpeed);
+        }
+        else if (currentSpeed > maxSpeed)
+        {
+            currentSpeed = Mathf.MoveTowards(
+                currentSpeed,
+                maxSpeed,
+                boostSpeedDecay * Time.fixedDeltaTime
+            );
+        }
+        else
+        {
+            float speedPercent = currentSpeed / maxSpeed;
+
+            float accelMultiplier = Mathf.Pow(
+                Mathf.Clamp01(1f - speedPercent),
+                2f
+            );
+
+            currentSpeed += acceleration * accelMultiplier * Time.fixedDeltaTime;
+
+            currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+        }
 
         Vector3 moveVelocity = orientation.forward * currentSpeed;
 
@@ -294,7 +344,7 @@ public class playerController : MonoBehaviour
 
     
 
-    void InitSmoke(ParticleSystem smoke)
+    void InitEffect(ParticleSystem smoke)
     {
         if (!smoke) return;
 
@@ -312,18 +362,23 @@ public class playerController : MonoBehaviour
         bool driftingRight = isDrifting && horizontalInput > 0.1f;
         bool driftingLeft = isDrifting && horizontalInput < -0.1f;
 
-        SetSmoke(driftSmokeRightTurn1, driftingRight);
-        SetSmoke(driftSmokeRightTurn2, driftingRight);
+        SetEffect(driftSmokeRightTurn1, driftingRight);
+        SetEffect(driftSmokeRightTurn2, driftingRight);
 
-        SetSmoke(driftSmokeLeftTurn1, driftingLeft);
-        SetSmoke(driftSmokeLeftTurn2, driftingLeft);
+        SetEffect(driftSmokeLeftTurn1, driftingLeft);
+        SetEffect(driftSmokeLeftTurn2, driftingLeft);
 
         bool shouldShowWind =  currentSpeed >= windMinimumSpeed;
 
-        SetSmoke(windParticles, shouldShowWind);
+        SetEffect(windParticles, shouldShowWind);
+
+        SetBoosterEffect(booster1, IsBoosting);
+        SetBoosterEffect(booster2, IsBoosting);
+        SetBoosterEffect(booster3, IsBoosting);
+        SetBoosterEffect(booster4, IsBoosting);
     }
 
-    void SetSmoke(ParticleSystem smoke, bool shouldPlay)
+    void SetEffect(ParticleSystem smoke, bool shouldPlay)
     {
         if (!smoke) return;
 
@@ -331,12 +386,35 @@ public class playerController : MonoBehaviour
         emission.enabled = shouldPlay;
     }
 
-    //used to slow down player when encoutering obstacles
+    void SetBoosterEffect(ParticleSystem effect, bool shouldPlay)
+    {
+        if (!effect) return;
+
+        if (shouldPlay)
+        {
+            if (!effect.isPlaying)
+                effect.Play(true);
+        }
+        else
+        {
+            if (effect.isPlaying)
+            {
+                effect.Stop(
+                    true,
+                    ParticleSystemStopBehavior.StopEmittingAndClear
+                );
+            }
+        }
+    }
+
     public void MultiplySpeed(float multiplier)
     {
         currentSpeed *= multiplier;
 
-        // Clamp just in case
-        currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+        currentSpeed = Mathf.Clamp(
+            currentSpeed,
+            0f,
+            boostedMaxSpeed
+        );
     }
 }

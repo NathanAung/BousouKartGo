@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0f3f4376628d89c4cbf4a2f900b6d7b7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 364676
+  packageName: Game VFX - Exhaust jet effect
+  packageVersion: 1.01
+  assetPath: Assets/Eric VFX Studio/Resource/Materials/glow_ball2_grey_Builtin.mat
+  uploadId: 901610

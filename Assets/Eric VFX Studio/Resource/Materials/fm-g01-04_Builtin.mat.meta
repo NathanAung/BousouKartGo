@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb0aacbd730438d42a8344b5fe2e3680
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 364676
+  packageName: Game VFX - Exhaust jet effect
+  packageVersion: 1.01
+  assetPath: Assets/Eric VFX Studio/Resource/Materials/fm-g01-04_Builtin.mat
+  uploadId: 901610

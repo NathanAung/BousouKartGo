@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 006393f6307525946bb2444c72e06bc9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 364676
+  packageName: Game VFX - Exhaust jet effect
+  packageVersion: 1.01
+  assetPath: Assets/Eric VFX Studio/Resource/Materials/dust08_Builtin.mat
+  uploadId: 901610

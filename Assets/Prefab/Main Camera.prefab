@@ -106,5 +106,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera
   target: {fileID: 0}
-  offset: {x: 0, y: 0.4, z: -1}
-  smoothSpeed: 5
+  offset: {x: 0, y: 0.4, z: -0.8}
+  positionSmooth: 10
+  rotationSmooth: 10
+  boostOffset: {x: 0, y: 0.5, z: -1.3}
+  boostOffsetSmooth: 0.5
+  boostReturnSmooth: 2.5

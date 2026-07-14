@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 6b4426a00825ec44cbe515e4a1698825
+timeCreated: 1522051764
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 364676
+  packageName: Game VFX - Exhaust jet effect
+  packageVersion: 1.01
+  assetPath: Assets/Eric VFX Studio/Resource/Materials/FX_Howling airflow.mat
+  uploadId: 901610

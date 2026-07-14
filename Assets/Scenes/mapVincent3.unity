@@ -1801,9 +1801,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1046102441914340269, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1129662765231283693, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_Name
       value: player (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495299070881536131, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1893866825168170563, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1979639075318781097, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2914072542501436525, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3081854014356932888, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3133100076418222653, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1844,6 +1868,38 @@ PrefabInstance:
     - target: {fileID: 3133100076418222653, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3769909544071447654, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850891922876172614, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4035219640240700959, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965157809570472425, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: TrailModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222208494231657672, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5549678244257466245, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7742911109515965384, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8187075223341310112, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2389,6 +2445,26 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1495299070881536131, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1893866825168170563, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1979639075318781097, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2914072542501436525, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3081854014356932888, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3133100076418222653, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.526
@@ -2429,6 +2505,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3769909544071447654, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3850891922876172614, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3886758454241925715, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: m_Height
       value: 0.36561203
@@ -2453,10 +2537,30 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 13400000, guid: ffa8a80c6f0a04c4c92ab45f6c75b9c7, type: 2}
+    - target: {fileID: 4035219640240700959, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222208494231657672, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5549678244257466245, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5775800412215659770, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 69663f6156311e44d96d7cfa933a27f0, type: 2}
+    - target: {fileID: 7742911109515965384, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8187075223341310112, guid: 76e847cb762b5764db2d56a65d421bb6, type: 3}
+      propertyPath: playOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
