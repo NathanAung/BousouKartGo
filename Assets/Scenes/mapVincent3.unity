@@ -543,12 +543,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1351295925}
     - target: {fileID: 6875199398524825035, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: offset.y
-      value: 0.333
-      objectReference: {fileID: 0}
-    - target: {fileID: 6875199398524825035, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: offset.z
-      value: -0.666
+      propertyPath: boostDriftDistance
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 7082759741533227525, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: m_LocalPosition.x
@@ -593,26 +589,6 @@ PrefabInstance:
     - target: {fileID: 7448725995395752104, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
       propertyPath: m_Name
       value: Main Camera
-      objectReference: {fileID: 0}
-    - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: field of view
-      value: 97
-      objectReference: {fileID: 0}
-    - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: far clip plane
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: m_TargetTexture
-      value: 
-      objectReference: {fileID: 8400000, guid: 1f6c1437115624fa8ae973901f9603c4, type: 2}
-    - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: near clip plane
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 7584613240926459246, guid: f2244ad6acb3a594ca6a7b4464d0d115, type: 3}
-      propertyPath: m_NormalizedViewPortRect.width
-      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

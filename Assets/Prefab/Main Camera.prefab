@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7448725995395752104}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.22318308, y: -0.3926304, z: 0.023054883, w: 0.89190763}
+  m_LocalRotation: {x: 0.22318104, y: -0.39263013, z: 0.023054065, w: 0.8919083}
   m_LocalPosition: {x: 0.000000103986466, y: 6.36, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -63,11 +63,11 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
+    width: 0.5
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.01
+  far clip plane: 90
+  field of view: 97
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -75,7 +75,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 1f6c1437115624fa8ae973901f9603c4, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -106,9 +106,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Camera
   target: {fileID: 0}
-  offset: {x: 0, y: 0.4, z: -0.8}
+  offset: {x: 0, y: 0.35, z: -0.65}
   positionSmooth: 10
   rotationSmooth: 10
   boostOffset: {x: 0, y: 0.5, z: -1.3}
   boostOffsetSmooth: 0.8
-  boostReturnSmooth: 5
+  driftSideOffset: 0.2
+  driftDistance: -0.5
+  driftHeight: 0.25
+  driftOffsetSmooth: 6
+  driftYaw: 8
+  driftPitch: -6
+  driftRoll: 3
+  boostDriftDistance: -0.75
+  boostDriftHeight: 0.4
+  returnSmooth: 8

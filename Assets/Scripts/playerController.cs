@@ -18,15 +18,19 @@ public class playerController : MonoBehaviour
     public InputAction boost;
 
     float horizontalInput = 0f;
-    public bool IsDrifting = false;
+    bool isDrifting = false;
+    bool driftingRight = false;
+    bool driftingLeft = false;
     public bool IsBoosting = false;
+    public bool IsDriftingRight => driftingRight;
+    public bool IsDriftingLeft => driftingLeft;
 
 
     [Header("Movement")]
-    [SerializeField] float maxSpeed = 200f;
-    [SerializeField] float acceleration = 8f;
-    [SerializeField] float boostedMaxSpeed = 8f;
-    [SerializeField] float boostAcceleration = 2f;
+    [SerializeField] float maxSpeed = 4f;
+    [SerializeField] float acceleration = 0.8f;
+    [SerializeField] float boostedMaxSpeed = 6f;
+    [SerializeField] float boostAcceleration = 1f;
     [SerializeField] float boostSpeedDecay = 1.2f;
 
     float currentSpeed = 0f;
@@ -169,7 +173,7 @@ public class playerController : MonoBehaviour
 
         Debug.Log($"{horizontalInput}");
 
-        IsDrifting = drift.IsPressed();
+        isDrifting = drift.IsPressed();
         IsBoosting = boost.IsPressed();
     }
 
@@ -254,7 +258,7 @@ public class playerController : MonoBehaviour
         // Rotate the car horizontally using a faster turning speed while drifting.
         float yaw = rb.rotation.eulerAngles.y;
 
-        if (IsDrifting)
+        if (isDrifting)
         {
             yaw +=
                 horizontalInput *
@@ -447,7 +451,7 @@ public class playerController : MonoBehaviour
     {
         float steer;
 
-        if (IsDrifting)
+        if (isDrifting)
         {
             steer =
                 -horizontalInput *
@@ -493,14 +497,14 @@ public class playerController : MonoBehaviour
     // Updates drift smoke, wind, and booster effects based on the car's state.
     void UpdateEffects()
     {
-        bool driftingRight =
+        driftingRight =
             isGrounded &&
-            IsDrifting &&
+            isDrifting &&
             horizontalInput > 0.1f;
 
-        bool driftingLeft =
+        driftingLeft =
             isGrounded &&
-            IsDrifting &&
+            isDrifting &&
             horizontalInput < -0.1f;
 
         SetEffect(
