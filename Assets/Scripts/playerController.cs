@@ -101,7 +101,7 @@ public class playerController : MonoBehaviour
     void FixedUpdate()
     {
         MoveCar();
-        
+
     }
 
     private void LateUpdate()
@@ -256,7 +256,7 @@ public class playerController : MonoBehaviour
         if (Physics.Raycast(rb.position, Vector3.down, out hit, 10f, safeLayer))
         {
             SaveSafePosition(hit.point);
-            
+
         }
     }
 
@@ -331,7 +331,7 @@ public class playerController : MonoBehaviour
         {
             steer = -horizontalInput * maxSteerAngle * 1.5f;
         }
-        else 
+        else
         {
             steer = horizontalInput * maxSteerAngle;
         }
@@ -342,7 +342,7 @@ public class playerController : MonoBehaviour
     }
 
 
-    
+
 
     void InitEffect(ParticleSystem smoke)
     {
@@ -359,8 +359,15 @@ public class playerController : MonoBehaviour
 
     void UpdateEffects()
     {
-        bool driftingRight = isDrifting && horizontalInput > 0.1f;
-        bool driftingLeft = isDrifting && horizontalInput < -0.1f;
+        bool driftingRight =
+            isGrounded &&
+            isDrifting &&
+            horizontalInput > 0.1f;
+
+        bool driftingLeft =
+            isGrounded &&
+            isDrifting &&
+            horizontalInput < -0.1f;
 
         SetEffect(driftSmokeRightTurn1, driftingRight);
         SetEffect(driftSmokeRightTurn2, driftingRight);
@@ -368,7 +375,7 @@ public class playerController : MonoBehaviour
         SetEffect(driftSmokeLeftTurn1, driftingLeft);
         SetEffect(driftSmokeLeftTurn2, driftingLeft);
 
-        bool shouldShowWind =  currentSpeed >= windMinimumSpeed;
+        bool shouldShowWind = currentSpeed >= windMinimumSpeed;
 
         SetEffect(windParticles, shouldShowWind);
 
