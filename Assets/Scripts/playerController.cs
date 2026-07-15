@@ -21,9 +21,25 @@ public class playerController : MonoBehaviour
     bool isDrifting = false;
     bool driftingRight = false;
     bool driftingLeft = false;
-    public bool IsBoosting = false;
+   
     public bool IsDriftingRight => driftingRight;
     public bool IsDriftingLeft => driftingLeft;
+
+    [Header("Boost")]
+    [SerializeField] float maxBoost = 100f;
+    [SerializeField] float boostDrainRate = 30f;
+    [SerializeField] float boostRechargeRate = 15f;
+    [SerializeField] float boostRechargeDelay = 1f;
+
+    float currentBoost;
+    float boostRechargeTimer;
+    bool boostPressed;
+    bool isBoosting;
+    bool boostDepleted;
+    public float CurrentBoost => currentBoost;
+    public float MaxBoost => maxBoost;
+    public float BoostPercent => currentBoost / maxBoost;
+    public bool IsBoosting => isBoosting;
 
 
     [Header("Movement")]
@@ -34,6 +50,9 @@ public class playerController : MonoBehaviour
     [SerializeField] float boostSpeedDecay = 1.2f;
 
     float currentSpeed = 0f;
+    public float CurrentSpeed => currentSpeed;
+    public float MaxSpeed => maxSpeed;
+    public float BoostedMaxSpeed => boostedMaxSpeed;
 
 
     [Header("Steering Visuals")]
@@ -167,6 +186,8 @@ public class playerController : MonoBehaviour
         );
 
         StartEngineAudio();
+
+        currentBoost = maxBoost; 
     }
 
 
@@ -179,6 +200,7 @@ public class playerController : MonoBehaviour
         }
         GetInput();
         CheckPosition();
+        UpdateBoost();
         UpdateEffects();
         UpdateSFX();
     }
@@ -206,7 +228,7 @@ public class playerController : MonoBehaviour
         Debug.Log($"{horizontalInput}");
 
         isDrifting = drift.IsPressed();
-        IsBoosting = boost.IsPressed();
+        boostPressed = boost.IsPressed();
     }
 
 
@@ -226,13 +248,13 @@ public class playerController : MonoBehaviour
         }
 
         // Accelerate toward the boosted maximum speed while boosting.
-        if (IsBoosting)
+        if (isBoosting)
         {
             float boostSpeedPercent = currentSpeed / boostedMaxSpeed;
 
             float boostAccelMultiplier = Mathf.Pow(
                 Mathf.Clamp01(1f - boostSpeedPercent),
-                2f
+                1.1f
             );
 
             currentSpeed +=
@@ -330,6 +352,44 @@ public class playerController : MonoBehaviour
         else
         {
             resetTimer = 0f;
+        }
+    }
+
+    // Drains boost while active and recharges it after a short delay.
+    void UpdateBoost()
+    {
+        // Require the player to release boost after fully depleting it.
+        if (!boostPressed)
+        {
+            boostDepleted = false;
+        }
+
+        isBoosting =
+            boostPressed &&
+            !boostDepleted &&
+            currentBoost > 0f;
+
+        if (isBoosting)
+        {
+            currentBoost -= boostDrainRate * Time.deltaTime;
+            boostRechargeTimer = boostRechargeDelay;
+
+            if (currentBoost <= 0f)
+            {
+                currentBoost = 0f;
+                isBoosting = false;
+                boostDepleted = true;
+            }
+        }
+        else
+        {
+            boostRechargeTimer -= Time.deltaTime;
+
+            if (boostRechargeTimer <= 0f)
+            {
+                currentBoost += boostRechargeRate * Time.deltaTime;
+                currentBoost = Mathf.Min(currentBoost, maxBoost);
+            }
         }
     }
 
@@ -592,27 +652,27 @@ public class playerController : MonoBehaviour
 
         SetBoosterEffect(
             booster1,
-            IsBoosting
+            isBoosting
         );
 
         SetBoosterEffect(
             booster2,
-            IsBoosting
+            isBoosting
         );
 
         SetBoosterEffect(
             booster3,
-            IsBoosting
+            isBoosting
         );
 
         SetBoosterEffect(
             booster4,
-            IsBoosting
+            isBoosting
         );
 
         SetBoosterEffect(
             booster5,
-            IsBoosting
+            isBoosting
         );
     }
 
@@ -729,19 +789,19 @@ public class playerController : MonoBehaviour
     void UpdateBoostAudio()
     {
         // Started boosting
-        if (IsBoosting && !wasBoosting)
+        if (isBoosting && !wasBoosting)
         {
             boostAudio.time = 0f;
             boostAudio.Play();
         }
 
         // Stopped boosting
-        if (!IsBoosting && wasBoosting)
+        if (!isBoosting && wasBoosting)
         {
             boostAudio.Stop();
         }
 
-        wasBoosting = IsBoosting;
+        wasBoosting = isBoosting;
     }
 
     // Plays and fades the tyre screech while the car is drifting.

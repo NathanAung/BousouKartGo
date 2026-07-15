@@ -146,10 +146,13 @@ MonoBehaviour:
       m_Action: Boost
       m_Flags: 0
     m_Flags: 0
-  IsBoosting: 0
-  maxSpeed: 4
+  maxBoost: 340
+  boostDrainRate: 35
+  boostRechargeRate: 30
+  boostRechargeDelay: 0.8
+  maxSpeed: 3.5
   acceleration: 0.4
-  boostedMaxSpeed: 6
+  boostedMaxSpeed: 4.8
   boostAcceleration: 1
   boostSpeedDecay: 1.2
   wheel1: {fileID: 8372397789378013436}
@@ -158,6 +161,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  driftGroundGraceTime: 0.15
   resetDelay: 0.2
   safeLayer:
     serializedVersion: 2
