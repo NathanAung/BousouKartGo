@@ -46,9 +46,12 @@ public class playerController : MonoBehaviour
 
     [Header("Ground and Wall Detection")]
     [SerializeField] LayerMask layerMask;
+    [SerializeField] float driftGroundGraceTime = 0.15f;
 
     bool isGrounded = false;
     bool isTouchingWall = false;
+
+    float lastGroundedTime;
 
 
     [Header("Reset Settings")]
@@ -91,6 +94,22 @@ public class playerController : MonoBehaviour
     [SerializeField] ParticleSystem booster3;
     [SerializeField] ParticleSystem booster4;
     [SerializeField] ParticleSystem booster5;
+
+    [Header("Engine Audio")]
+    [SerializeField] AudioSource engineAudio;
+    [SerializeField] float minimumEngineVolume = 0.1f;
+    [SerializeField] float maximumEngineVolume = 0.5f;
+    [SerializeField] float engineVolumeSmooth = 5f;
+
+    [Header("Boost Audio")]
+    [SerializeField] AudioSource boostAudio;
+    bool wasBoosting = false;
+
+    [Header("Drift Audio")]
+    [SerializeField] AudioSource driftAudio;
+    [SerializeField] float maximumDriftVolume = 0.8f;
+    [SerializeField] float driftVolumeSmooth = 5f;
+    bool wasDrifting = false;
 
 
     // Enables the player's input actions when this component becomes active.
@@ -146,15 +165,22 @@ public class playerController : MonoBehaviour
             true,
             ParticleSystemStopBehavior.StopEmittingAndClear
         );
+
+        StartEngineAudio();
     }
 
 
-    // Reads input, saves safe positions, and updates visual effects each frame.
+    // Reads input, saves safe positions, and updates visual and sound effects each frame.
     void Update()
     {
+        if (isGrounded)
+        {
+            lastGroundedTime = Time.time;
+        }
         GetInput();
         CheckPosition();
         UpdateEffects();
+        UpdateSFX();
     }
 
 
@@ -264,7 +290,7 @@ public class playerController : MonoBehaviour
         // Rotate the car horizontally using a faster turning speed while drifting.
         float yaw = rb.rotation.eulerAngles.y;
 
-        if (isDrifting)
+        if (driftingRight || driftingLeft)
         {
             yaw +=
                 horizontalInput *
@@ -311,6 +337,8 @@ public class playerController : MonoBehaviour
     // Restores the car to a previously saved safe position.
     void ResetCar()
     {
+        StopEngineAudio();
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         currentSpeed = 0f;
@@ -342,6 +370,18 @@ public class playerController : MonoBehaviour
 
         rb.Sleep();
         rb.WakeUp();
+        
+        StartEngineAudio();
+
+        //reset boost audio
+        boostAudio.Stop();
+        boostAudio.time = 0f;
+        wasBoosting = false;
+        //reset drift audio
+        driftAudio.Stop();
+        driftAudio.time = 0f;
+        driftAudio.volume = 0f;
+        wasDrifting = false;
     }
 
 
@@ -406,6 +446,13 @@ public class playerController : MonoBehaviour
         hasSecondSafePosition = true;
     }
 
+    // Allows drifting to continue briefly after losing ground contact.
+    bool CanDriftOnGround()
+    {
+        return isGrounded ||
+               Time.time - lastGroundedTime <= driftGroundGraceTime;
+    }
+
 
     // Detects whether the car is touching the ground or a track wall.
     void OnCollisionStay(Collision collision)
@@ -457,7 +504,7 @@ public class playerController : MonoBehaviour
     {
         float steer;
 
-        if (isDrifting)
+        if (driftingRight || driftingLeft)
         {
             steer =
                 -horizontalInput *
@@ -503,13 +550,15 @@ public class playerController : MonoBehaviour
     // Updates drift smoke, wind, and booster effects based on the car's state.
     void UpdateEffects()
     {
+        bool hasDriftGroundContact = CanDriftOnGround();
+
         driftingRight =
-            isGrounded &&
+            hasDriftGroundContact &&
             isDrifting &&
             horizontalInput > 0.1f;
 
         driftingLeft =
-            isGrounded &&
+            hasDriftGroundContact &&
             isDrifting &&
             horizontalInput < -0.1f;
 
@@ -625,6 +674,109 @@ public class playerController : MonoBehaviour
             0f,
             boostedMaxSpeed
         );
+    }
+
+    // Updates the SFX
+    void UpdateSFX()
+    {
+        UpdateEngineAudio();
+        UpdateBoostAudio();
+        UpdateDriftAudio();
+    }
+
+    // Starts the looping engine sound.
+    void StartEngineAudio()
+    {
+        if (engineAudio == null || engineAudio.isPlaying)
+            return;
+
+        engineAudio.volume = minimumEngineVolume;
+        engineAudio.Play();
+    }
+
+    // Adjusts engine volume based on the car's current speed.
+    void UpdateEngineAudio()
+    {
+        if (engineAudio == null || !engineAudio.isPlaying)
+            return;
+
+        float speedPercent = Mathf.Clamp01(currentSpeed / maxSpeed);
+
+        float targetVolume = Mathf.Lerp(
+            minimumEngineVolume,
+            maximumEngineVolume,
+            speedPercent
+        );
+
+        engineAudio.volume = Mathf.Lerp(
+            engineAudio.volume,
+            targetVolume,
+            engineVolumeSmooth * Time.deltaTime
+        );
+    }
+
+    // Stops the engine sound and rewinds it to the beginning.
+    void StopEngineAudio()
+    {
+        if (engineAudio == null)
+            return;
+
+        engineAudio.Stop();
+        engineAudio.time = 0f;
+    }
+
+    // Plays and stops the boost sound when boosting starts or ends.
+    void UpdateBoostAudio()
+    {
+        // Started boosting
+        if (IsBoosting && !wasBoosting)
+        {
+            boostAudio.time = 0f;
+            boostAudio.Play();
+        }
+
+        // Stopped boosting
+        if (!IsBoosting && wasBoosting)
+        {
+            boostAudio.Stop();
+        }
+
+        wasBoosting = IsBoosting;
+    }
+
+    // Plays and fades the tyre screech while the car is drifting.
+    void UpdateDriftAudio()
+    {
+        bool shouldPlayDriftAudio = isDrifting && CanDriftOnGround();
+
+        // Drift just started.
+        if (shouldPlayDriftAudio && !wasDrifting)
+        {
+            driftAudio.volume = 0f;
+            driftAudio.time = 0f;
+            driftAudio.Play();
+        }
+
+        float targetVolume = shouldPlayDriftAudio
+            ? maximumDriftVolume
+            : 0f;
+
+        driftAudio.volume = Mathf.MoveTowards(
+            driftAudio.volume,
+            targetVolume,
+            driftVolumeSmooth * Time.deltaTime
+        );
+
+        // Stop the clip once it has faded out completely.
+        if (!shouldPlayDriftAudio &&
+            driftAudio.isPlaying &&
+            driftAudio.volume <= 0f)
+        {
+            driftAudio.Stop();
+            driftAudio.time = 0f;
+        }
+
+        wasDrifting = shouldPlayDriftAudio;
     }
 }
 
