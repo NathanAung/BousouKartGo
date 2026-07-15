@@ -13,9 +13,10 @@ public class playerController : MonoBehaviour
 
 
     [Header("Input")]
-    public InputAction move;
-    public InputAction drift;
-    public InputAction boost;
+    private PlayerInput playerInput;
+    private InputAction move;
+    private InputAction drift;
+    private InputAction boost;
 
     float horizontalInput = 0f;
     bool isDrifting = false;
@@ -130,24 +131,15 @@ public class playerController : MonoBehaviour
     [SerializeField] float driftVolumeSmooth = 5f;
     bool wasDrifting = false;
 
-
-    // Enables the player's input actions when this component becomes active.
-    private void OnEnable()
+    // Gets this player's individually assigned input actions.
+    private void Awake()
     {
-        move.Enable();
-        drift.Enable();
-        boost.Enable();
+        playerInput = GetComponent<PlayerInput>();
+
+        move = playerInput.actions["Move"];
+        drift = playerInput.actions["Drift"];
+        boost = playerInput.actions["Boost"];
     }
-
-
-    // Disables the player's input actions when this component becomes inactive.
-    private void OnDisable()
-    {
-        move.Disable();
-        drift.Disable();
-        boost.Disable();
-    }
-
 
     // Gets required components and prepares all particle effects.
     void Start()
@@ -225,7 +217,7 @@ public class playerController : MonoBehaviour
     {
         horizontalInput = move.ReadValue<float>();
 
-        Debug.Log($"{horizontalInput}");
+        //Debug.Log($"{horizontalInput}");
 
         isDrifting = drift.IsPressed();
         boostPressed = boost.IsPressed();

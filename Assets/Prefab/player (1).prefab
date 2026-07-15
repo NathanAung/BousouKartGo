@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 223920291851324845}
   - component: {fileID: 3886758454241925715}
   - component: {fileID: 4965506419654794236}
+  - component: {fileID: 8576060689016453266}
   m_Layer: 0
   m_Name: player (1)
   m_TagString: Player
@@ -79,79 +80,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   orientation: {fileID: 3133100076418222653}
-  move:
-    m_Name: Move
-    m_Type: 0
-    m_ExpectedControlType: Axis
-    m_Id: 24f8922d-a356-4525-ac32-6215ec37ed2e
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 1D Axis
-      m_Id: 6e58af16-bae3-4475-9f2d-659490c070e3
-      m_Path: 1DAxis
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 4
-    - m_Name: negative
-      m_Id: 4df048c0-113e-4403-b207-3d8b52be6a60
-      m_Path: <Keyboard>/a
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: positive
-      m_Id: f77020e2-5c8d-4f2f-a765-e1f007d9ec8d
-      m_Path: <Keyboard>/d
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    m_Flags: 0
-  drift:
-    m_Name: Drift
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: e57e62a1-312c-4e7a-a5f8-daffa9bf6dc8
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: ea7b6edb-a666-410b-a4c6-f6b62de2b690
-      m_Path: <Keyboard>/shift
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Drift
-      m_Flags: 0
-    m_Flags: 0
-  boost:
-    m_Name: Boost
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 2f6b1b39-59e6-4f14-8a13-f6d11175258b
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 33357158-bfe5-4b78-87d0-838f99654530
-      m_Path: <Keyboard>/space
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Boost
-      m_Flags: 0
-    m_Flags: 0
-  maxBoost: 340
+  maxBoost: 170
   boostDrainRate: 35
   boostRechargeRate: 30
   boostRechargeDelay: 0.8
   maxSpeed: 3.5
-  acceleration: 0.4
+  acceleration: 0.8
   boostedMaxSpeed: 4.8
   boostAcceleration: 1
   boostSpeedDecay: 1.2
@@ -223,6 +157,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLap
   lap: 0
   lapState: 0
+--- !u!114 &8576060689016453266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129662765231283693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
+  m_NotificationBehavior: 3
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1386411256774727730
 GameObject:
   m_ObjectHideFlags: 0
