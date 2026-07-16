@@ -4048,6 +4048,8 @@ MonoBehaviour:
   victoryRespawnPoint: {fileID: 1750904538}
   victoryCameraPoint: {fileID: 7233834}
   fireworksAudio: {fileID: 1519067422}
+  titleSceneName: Title
+  returnInputDelay: 1.5
 --- !u!4 &1519067420
 Transform:
   m_ObjectHideFlags: 0
