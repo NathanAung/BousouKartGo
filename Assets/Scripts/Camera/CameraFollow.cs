@@ -36,6 +36,14 @@ public class CameraFollow : MonoBehaviour
     Vector3 currentOffset;
     Vector3 offsetVelocity;
 
+    [Header("Victory Camera")]
+    [SerializeField] Transform victoryCameraPoint;
+
+    [SerializeField] float victoryPositionSmooth = 10f;
+    [SerializeField] float victoryRotationSmooth = 10f;
+
+    private bool victoryCameraMode;
+
     void Start()
     {
         currentOffset = offset;
@@ -51,6 +59,12 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null)
             return;
+
+        if (victoryCameraMode)
+        {
+            UpdateVictoryCamera();
+            return;
+        }
 
         bool isBoosting = player != null && player.IsBoosting;
         bool isDriftingRight = player != null && player.IsDriftingRight;
@@ -147,5 +161,39 @@ public class CameraFollow : MonoBehaviour
             transform.rotation,
             desiredRotation,
             rotationT);
+    }
+
+    private void UpdateVictoryCamera()
+    {
+        if (victoryCameraPoint == null)
+            return;
+
+        float positionT =
+            1f - Mathf.Exp(
+                -victoryPositionSmooth * Time.deltaTime
+            );
+
+        float rotationT =
+            1f - Mathf.Exp(
+                -victoryRotationSmooth * Time.deltaTime
+            );
+
+        transform.position = Vector3.Lerp(
+            transform.position,
+            victoryCameraPoint.position,
+            positionT
+        );
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            victoryCameraPoint.rotation,
+            rotationT
+        );
+    }
+
+    public void StartVictoryCamera(Transform point)
+    {
+        victoryCameraPoint = point;
+        victoryCameraMode = true;
     }
 }

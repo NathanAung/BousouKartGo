@@ -120,4 +120,7 @@ MonoBehaviour:
   driftRoll: 3
   boostDriftDistance: -0.75
   boostDriftHeight: 0.4
-  returnSmooth: 8
+  returnSmooth: 7
+  victoryCameraPoint: {fileID: 0}
+  victoryPositionSmooth: 1
+  victoryRotationSmooth: 1

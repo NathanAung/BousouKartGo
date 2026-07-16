@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class playerController : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class playerController : MonoBehaviour
     bool isDrifting = false;
     bool driftingRight = false;
     bool driftingLeft = false;
-   
+
     public bool IsDriftingRight => driftingRight;
     public bool IsDriftingLeft => driftingLeft;
 
@@ -131,6 +132,27 @@ public class playerController : MonoBehaviour
     [SerializeField] float driftVolumeSmooth = 5f;
     bool wasDrifting = false;
 
+    [Header("Victory Donut")]
+    [SerializeField] float victoryDonutSpeed = 1.2f;
+    [SerializeField] float victoryDonutTurnSpeed = 140f;
+    bool controlsLocked = false;
+    bool isDoingVictoryDonut = false;
+    float victoryDonutDirection = 1f;
+    [SerializeField] Transform victoryRespawnPoint;
+    bool useVictoryRespawn = false;
+
+
+    [Header("Loser Sequence")]
+    [SerializeField] GameObject loserExplosionPrefab;
+    [SerializeField] Transform loserExplosionPoint;
+    [SerializeField] ParticleSystem loserSmoke;
+    [SerializeField] float loserSlowdownDuration = 1f;
+
+    bool isLosing = false;
+
+
+
+
     // Gets this player's individually assigned input actions.
     private void Awake()
     {
@@ -151,6 +173,8 @@ public class playerController : MonoBehaviour
         InitEffect(driftSmokeRightTurn1);
         InitEffect(driftSmokeRightTurn2);
         InitEffect(windParticles);
+
+        InitEffect(loserSmoke);
 
         booster1.Stop(
             true,
@@ -179,7 +203,12 @@ public class playerController : MonoBehaviour
 
         StartEngineAudio();
 
-        currentBoost = maxBoost; 
+        currentBoost = maxBoost;
+
+        //loserExplosion.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        //loserSmoke
+
+       
     }
 
 
@@ -215,14 +244,36 @@ public class playerController : MonoBehaviour
     // Reads steering, drifting, and boosting input states.
     void GetInput()
     {
+        if (isDoingVictoryDonut)
+        {
+            horizontalInput = victoryDonutDirection;
+            isDrifting = true;
+            boostPressed = false;
+            return;
+        }
+
+        if (controlsLocked)
+        {
+            horizontalInput = 0f;
+            isDrifting = false;
+            boostPressed = false;
+            return;
+        }
+
         horizontalInput = move.ReadValue<float>();
-
-        //Debug.Log($"{horizontalInput}");
-
         isDrifting = drift.IsPressed();
         boostPressed = boost.IsPressed();
     }
 
+    public void LockControls()
+    {
+        controlsLocked = true;
+
+        horizontalInput = 0f;
+        isDrifting = false;
+        boostPressed = false;
+        isBoosting = false;
+    }
 
     // Controls acceleration, velocity, steering, rotation, and reset conditions.
     void MoveCar()
@@ -240,7 +291,15 @@ public class playerController : MonoBehaviour
         }
 
         // Accelerate toward the boosted maximum speed while boosting.
-        if (isBoosting)
+        if (isLosing)
+        {
+            // Speed is controlled by the loser slowdown coroutine.
+        }
+        else if (isDoingVictoryDonut)
+        {
+            currentSpeed = victoryDonutSpeed;
+        }
+        else if (isBoosting)
         {
             float boostSpeedPercent = currentSpeed / boostedMaxSpeed;
 
@@ -259,8 +318,6 @@ public class playerController : MonoBehaviour
                 boostedMaxSpeed
             );
         }
-
-        // Gradually return to normal maximum speed after boosting.
         else if (currentSpeed > maxSpeed)
         {
             currentSpeed = Mathf.MoveTowards(
@@ -269,7 +326,6 @@ public class playerController : MonoBehaviour
                 boostSpeedDecay * Time.fixedDeltaTime
             );
         }
-
         // Apply normal acceleration with reduced acceleration near maximum speed.
         else
         {
@@ -304,7 +360,14 @@ public class playerController : MonoBehaviour
         // Rotate the car horizontally using a faster turning speed while drifting.
         float yaw = rb.rotation.eulerAngles.y;
 
-        if (driftingRight || driftingLeft)
+        if (isDoingVictoryDonut)
+        {
+            yaw +=
+                victoryDonutDirection *
+                victoryDonutTurnSpeed *
+                Time.fixedDeltaTime;
+        }
+        else if (driftingRight || driftingLeft)
         {
             yaw +=
                 horizontalInput *
@@ -398,7 +461,12 @@ public class playerController : MonoBehaviour
         Vector3 respawnPosition;
         Quaternion respawnRotation;
 
-        if (hasSecondSafePosition)
+        if (useVictoryRespawn && victoryRespawnPoint != null)
+        {
+            respawnPosition = victoryRespawnPoint.position;
+            respawnRotation = victoryRespawnPoint.rotation;
+        }
+        else if (hasSecondSafePosition)
         {
             respawnPosition = prevSafePosition;
             respawnRotation = prevSafeRotation;
@@ -422,7 +490,7 @@ public class playerController : MonoBehaviour
 
         rb.Sleep();
         rb.WakeUp();
-        
+
         StartEngineAudio();
 
         //reset boost audio
@@ -440,6 +508,11 @@ public class playerController : MonoBehaviour
     // Periodically checks for valid ground beneath the car and saves its position.
     void CheckPosition()
     {
+        if (useVictoryRespawn)
+        {
+            return;
+        }
+
         safePositionTimer += Time.deltaTime;
 
         if (
@@ -577,7 +650,7 @@ public class playerController : MonoBehaviour
             Quaternion.Euler(0f, steer, 0f);
 
         steeringWheel.localRotation =
-            Quaternion.Euler(steer, 0f, 0f);
+            Quaternion.Euler(0f, -90f, -90f + steer);
     }
 
 
@@ -829,6 +902,83 @@ public class playerController : MonoBehaviour
         }
 
         wasDrifting = shouldPlayDriftAudio;
+    }
+
+    public void StartVictoryDonut(float delay)
+    {
+        StartCoroutine(StartVictoryDonutRoutine(delay));
+    }
+
+    private IEnumerator StartVictoryDonutRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        isDoingVictoryDonut = true;
+
+        victoryDonutDirection = -1f;
+
+        boostPressed = false;
+        isBoosting = false;
+    }
+
+    public void SetVictoryRespawnPoint(Transform respawnPoint)
+    {
+        victoryRespawnPoint = respawnPoint;
+        useVictoryRespawn = true;
+    }
+
+    public void StartLoserSequence()
+    {
+        if (isLosing)
+            return;
+
+        isLosing = true;
+
+        LockControls();
+
+        GameObject explosion = Instantiate(
+            loserExplosionPrefab,
+            loserExplosionPoint.position,
+            loserExplosionPoint.rotation,
+            loserExplosionPoint
+        );
+
+        explosion.transform.localScale = Vector3.one * 0.1f;
+
+        SetEffect(loserSmoke, true);
+
+        StartCoroutine(SlowLoserCar());
+    }
+
+    private IEnumerator SlowLoserCar()
+    {
+        float startingSpeed = currentSpeed;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < loserSlowdownDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsedTime / loserSlowdownDuration
+            );
+
+            currentSpeed = Mathf.Lerp(
+                startingSpeed,
+                0f,
+                t
+            );
+
+            yield return null;
+        }
+
+        currentSpeed = 0f;
+
+        rb.linearVelocity = new Vector3(
+            0f,
+            rb.linearVelocity.y,
+            0f
+        );
     }
 }
 

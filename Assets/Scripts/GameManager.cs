@@ -1,15 +1,27 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] bool debugMode = false; 
+    [SerializeField] bool debugMode = false;
+    [SerializeField] int lapsToWin = 3;
 
     [SerializeField] Transform[] carsPos;
-
-
+    [SerializeField] private CameraFollow[] playerCameras;
     private List<Car> cars;
+    private bool raceEnded = false;
+
+    [Header("End Sequence")]
+    [SerializeField] private GameObject fireworkPrefab;
+    [SerializeField] private Transform[] fireworkSpawnPoints;
+
+    [SerializeField] private WinScreenUI winScreen;
+    [SerializeField] private Transform victoryRespawnPoint;
+
+    [SerializeField] private Transform victoryCameraPoint;
+    [SerializeField] private AudioSource fireworksAudio;
 
     void Start()
     {
@@ -32,17 +44,63 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        foreach (Car car in cars) {
-            if(car.lap.lapState == 2)
+        foreach (Car car in cars)
+        {
+            if (car.lap.lapState == 2)
             {
                 car.lap.lapState = 0;
                 car.lap.lap += 1;
             }
 
-            if (car.lap.lap == 3)
+            if (car.lap.lap >= lapsToWin && !raceEnded)
             {
                 // GAME WIN
-                Debug.Break();
+                //Debug.Break();
+                raceEnded = true;
+                winScreen.ShowWinner(car.id);
+                LaunchFireworks();
+                if (fireworksAudio != null) 
+                { 
+                    fireworksAudio.Play();
+                }
+
+                playerController winnerController =
+                    car.pos.GetComponent<playerController>();
+
+                if (winnerController != null)
+                {
+                    winnerController.SetVictoryRespawnPoint(
+                        victoryRespawnPoint
+                    );
+
+                    winnerController.LockControls();
+                    winnerController.StartVictoryDonut(0.5f);
+                }
+
+                if (
+                    car.id >= 0 &&
+                    car.id < playerCameras.Length &&
+                    playerCameras[car.id] != null
+                )
+                {
+                    playerCameras[car.id].StartVictoryCamera(
+                        victoryCameraPoint
+                    );
+                }
+
+                foreach (Car otherCar in cars)
+                {
+                    if (otherCar.id == car.id)
+                        continue;
+
+                    playerController loserController =
+                        otherCar.pos.GetComponent<playerController>();
+
+                    if (loserController != null)
+                    {
+                        loserController.StartLoserSequence();
+                    }
+                }
             }
         }
     }
@@ -63,6 +121,25 @@ public class GameManager : MonoBehaviour
         }
 
         GUILayout.EndArea();
+    }
+
+    private void LaunchFireworks()
+    {
+        foreach (Transform spawnPoint in fireworkSpawnPoints)
+        {
+            StartCoroutine(LaunchFireworkDelayed(spawnPoint));
+        }
+    }
+
+    private IEnumerator LaunchFireworkDelayed(Transform spawnPoint)
+    {
+        yield return new WaitForSeconds(Random.Range(0f, 1f));
+
+        Instantiate(
+            fireworkPrefab,
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
     }
 }
 
