@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 7213274}
   - component: {fileID: 7213273}
   - component: {fileID: 7213272}
+  - component: {fileID: 7213276}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -232,6 +233,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1944553274}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7213276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7213271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c47e810ec1284375a872a2506b4d167, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterController
+  targetRenderer: {fileID: 7213273}
+  baseMaps:
+  - {fileID: 2800000, guid: ca38bc9a3708541f5acf73d5d5f7c1aa, type: 3}
+  - {fileID: 2800000, guid: c01d4885935eb44a8bbf7fe16a8fb69b, type: 3}
+  - {fileID: 2800000, guid: 6dd478fa831f349c1b1e63d5afc928ce, type: 3}
+  - {fileID: 2800000, guid: 69e1fdb74ab354e7cac0cfbc55bd5e4c, type: 3}
+  - {fileID: 2800000, guid: fea794b6e0d8c4a93a91965304e1cfba, type: 3}
+  normalMaps:
+  - {fileID: 2800000, guid: e9f6ec169773048e98e09e3f131c40a9, type: 3}
+  - {fileID: 2800000, guid: c3cf9e9ca5e3b41f5889aac8eedb5236, type: 3}
+  - {fileID: 2800000, guid: 7a431f4931cc74105a5951c39c8c1491, type: 3}
+  - {fileID: 2800000, guid: e18a2d7cc62dc4b3a9a990ad0ffffbac, type: 3}
+  - {fileID: 2800000, guid: 58b46c4b11e0146e29a6a6bcb4122796, type: 3}
+  switchInterval: 0.3
 --- !u!1 &7319056
 GameObject:
   m_ObjectHideFlags: 0
