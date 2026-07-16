@@ -4,7 +4,13 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/Title.unity
+    guid: 9c12ae616def0194397d72af9786f0d2
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/Race.unity
+    guid: 294aa976535e99f41ae175fdcf1852ab
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

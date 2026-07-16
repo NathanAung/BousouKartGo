@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +24,12 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Transform victoryCameraPoint;
     [SerializeField] private AudioSource fireworksAudio;
+
+    [Header("Return To Title")]
+    [SerializeField] private string titleSceneName = "Title";
+    [SerializeField] private float returnInputDelay = 1.5f;
+
+    private float raceEndTime;
 
     void Start()
     {
@@ -101,7 +109,14 @@ public class GameManager : MonoBehaviour
                         loserController.StartLoserSequence();
                     }
                 }
+
+                raceEndTime = Time.time;
             }
+        }
+
+        if (raceEnded && Time.time >= raceEndTime + returnInputDelay && AnyInputPressed())
+        {
+            SceneManager.LoadScene(titleSceneName);
         }
     }
 
@@ -140,6 +155,33 @@ public class GameManager : MonoBehaviour
             spawnPoint.position,
             spawnPoint.rotation
         );
+    }
+
+    private bool AnyInputPressed()
+    {
+        if (
+            Keyboard.current != null &&
+            Keyboard.current.anyKey.wasPressedThisFrame
+        )
+        {
+            return true;
+        }
+
+        foreach (Gamepad gamepad in Gamepad.all)
+        {
+            foreach (InputControl control in gamepad.allControls)
+            {
+                if (
+                    control is UnityEngine.InputSystem.Controls.ButtonControl button &&
+                    button.wasPressedThisFrame
+                )
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
 
