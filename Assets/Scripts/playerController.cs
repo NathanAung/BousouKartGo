@@ -102,6 +102,9 @@ public class playerController : MonoBehaviour
     [SerializeField] float boostHitForwardForce = 12f;
     [SerializeField] float victimSpeedMultiplier = 0.55f;
     [SerializeField] float attackerSpeedMultiplier = 0.9f;
+    [SerializeField] float boostCollisionEffectTimer = 0f;
+    [SerializeField] float boostCollisionEffectDuration = 0.4f;
+    bool isBoostCollision = false;
 
 
     [Header("Airborne Player Collision")]
@@ -131,6 +134,7 @@ public class playerController : MonoBehaviour
     [SerializeField] ParticleSystem booster3;
     [SerializeField] ParticleSystem booster4;
     [SerializeField] ParticleSystem booster5;
+    [SerializeField] ParticleSystem boostCollision; 
 
     [Header("Engine Audio")]
     [SerializeField] AudioSource engineAudio;
@@ -218,6 +222,11 @@ public class playerController : MonoBehaviour
             ParticleSystemStopBehavior.StopEmittingAndClear
         );
 
+        boostCollision.Stop(
+            true,
+            ParticleSystemStopBehavior.StopEmittingAndClear
+        );
+
         StartEngineAudio();
 
         currentBoost = maxBoost;
@@ -271,6 +280,15 @@ public class playerController : MonoBehaviour
             return;
         }
 
+        if (!GameManager.raceStarted)
+        {
+            horizontalInput = 0f;
+            isDrifting = false;
+            boostPressed = false;
+            return;
+        }
+
+
         if (controlsLocked)
         {
             horizontalInput = 0f;
@@ -294,9 +312,27 @@ public class playerController : MonoBehaviour
         isBoosting = false;
     }
 
+    public void UnlockControls()
+    {
+        controlsLocked = false;
+    }
+
     // Controls acceleration, velocity, steering, rotation, and reset conditions.
     void MoveCar()
     {
+        if (!GameManager.raceStarted)
+        {
+            currentSpeed = 0f;
+
+            rb.linearVelocity = new Vector3(
+                0f,
+                rb.linearVelocity.y,
+                0f
+            );
+
+            return;
+        }
+
         // Lock the car upright while grounded and allow free rotation in the air.
         if (isGrounded)
         {
@@ -432,6 +468,14 @@ public class playerController : MonoBehaviour
     // Drains boost while active and recharges it after a short delay.
     void UpdateBoost()
     {
+
+        if (!GameManager.raceStarted)
+        {
+            isBoosting = false;
+            boostPressed = false;
+            return;
+        }
+
         // Require the player to release boost after fully depleting it.
         if (!boostPressed)
         {
@@ -652,6 +696,8 @@ public class playerController : MonoBehaviour
         if (otherRb == null)
             return;
 
+        isBoostCollision = true;            
+
         // Launch them
         Vector3 force =
             transform.forward * boostHitForwardForce +
@@ -864,6 +910,25 @@ public class playerController : MonoBehaviour
         SetBoosterEffect(
             booster5,
             isBoosting
+        );
+
+        if (isBoostCollision)
+        {
+            if (boostCollisionEffectTimer < boostCollisionEffectDuration)
+            {
+                boostCollisionEffectTimer += Time.deltaTime;
+            }
+            else 
+            {
+                isBoostCollision = false;
+                boostCollisionEffectTimer = 0;
+            }
+            
+        }
+
+        SetBoosterEffect(
+            boostCollision,
+            isBoostCollision
         );
     }
 

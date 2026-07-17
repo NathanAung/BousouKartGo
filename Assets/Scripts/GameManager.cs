@@ -8,11 +8,21 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+    
+
     [SerializeField] bool debugMode = false;
     [SerializeField] int lapsToWin = 3;
 
     [SerializeField] Transform[] carsPos;
     [SerializeField] private CameraFollow[] playerCameras;
+
+    [Header("Race Start")]
+    [SerializeField] private float raceStartDelay = 4f;
+    [SerializeField] private AudioSource startAudioSource;
+    [SerializeField] private AudioClip startAudioClip;
+    public static bool raceStarted = false;
+    [SerializeField] private StartingLight[] startingLights;
+
     private List<Car> cars;
     private bool raceEnded = false;
 
@@ -53,6 +63,8 @@ public class GameManager : MonoBehaviour
             cars.Add(new Car($"Car[{i}]",i,t,playerLap));
             i++;
         }
+
+        StartCoroutine(StartRace());
     }
 
     void Update()
@@ -144,6 +156,28 @@ public class GameManager : MonoBehaviour
         }
 
         GUILayout.EndArea();
+    }
+
+    private IEnumerator StartRace()
+    {
+        if (startAudioSource != null && startAudioClip != null)
+        {
+            startAudioSource.PlayOneShot(startAudioClip);
+        }
+
+        foreach (StartingLight light in startingLights)
+        {
+            light.BeginSequence();
+        }
+
+        yield return new WaitForSeconds(raceStartDelay);
+
+        raceStarted = true;
+
+        foreach (StartingLight light in startingLights)
+        {
+            light.FlyAway();
+        }
     }
 
     private void LaunchFireworks()
