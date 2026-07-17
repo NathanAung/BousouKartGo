@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -46,6 +47,15 @@ public class GameManager : MonoBehaviour
 
     private float raceEndTime;
 
+
+    private void Awake()
+    {
+        raceStarted = false;
+
+        raceEnded = false;
+
+        Time.timeScale = 1.0f;
+    }
     void Start()
     {
         int i = 0;
@@ -136,6 +146,7 @@ public class GameManager : MonoBehaviour
 
         if (raceEnded && Time.time >= raceEndTime + returnInputDelay && AnyInputPressed())
         {
+            raceStarted = false;
             SceneManager.LoadScene(titleSceneName);
         }
     }
