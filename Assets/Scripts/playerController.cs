@@ -9,7 +9,7 @@ public class playerController : MonoBehaviour
     [SerializeField] Transform orientation;
 
     Rigidbody rb;
-    CapsuleCollider capsuleCollider;
+    CapsuleCollider playerCollider;
     RaycastHit hit;
 
 
@@ -97,6 +97,22 @@ public class playerController : MonoBehaviour
     float safePositionTimer = 0f;
 
 
+    [Header("Boost Collision")]
+    [SerializeField] float boostHitUpwardForce = 6f;
+    [SerializeField] float boostHitForwardForce = 12f;
+    [SerializeField] float victimSpeedMultiplier = 0.55f;
+    [SerializeField] float attackerSpeedMultiplier = 0.9f;
+
+
+    [Header("Airborne Player Collision")]
+    [SerializeField] float collisionRestoreDelay = 0.15f;
+
+    //private Collider playerCollider;
+    private playerController otherPlayer;
+    private bool ignoringPlayerCollision;
+    private float bothGroundedTimer;
+
+
     [Header("Wind Effect")]
     [SerializeField] ParticleSystem windParticles;
     [SerializeField] float windMinimumSpeed = 50f;
@@ -157,6 +173,7 @@ public class playerController : MonoBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
+        playerCollider = GetComponent<CapsuleCollider>();
 
         move = playerInput.actions["Move"];
         drift = playerInput.actions["Drift"];
@@ -230,7 +247,9 @@ public class playerController : MonoBehaviour
     // Handles physics-based movement at a fixed interval.
     void FixedUpdate()
     {
+        UpdatePlayerCollision();
         MoveCar();
+        
     }
 
 
@@ -611,6 +630,45 @@ public class playerController : MonoBehaviour
     }
 
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        playerController other = collision.gameObject.GetComponent<playerController>();
+
+        if (other == null)
+            return;
+
+        // Only works while boosting
+        if (!isBoosting)
+            return;
+
+        // Make sure we're actually hitting them from behind
+        Vector3 toOther = (other.transform.position - transform.position).normalized;
+
+        if (Vector3.Dot(transform.forward, toOther) < 0.2f)
+            return;
+
+        Rigidbody otherRb = other.GetComponent<Rigidbody>();
+
+        if (otherRb == null)
+            return;
+
+        // Launch them
+        Vector3 force =
+            transform.forward * boostHitForwardForce +
+            Vector3.up * boostHitUpwardForce;
+
+        otherRb.AddForce(force, ForceMode.VelocityChange);
+
+        // Slow them
+        otherRb.linearVelocity *= victimSpeedMultiplier;
+
+        // Small slowdown for attacker
+        rb.linearVelocity *= attackerSpeedMultiplier;
+    }
+
+
+
+
     // Clears ground and wall contact states after leaving the track.
     void OnCollisionExit(Collision collision)
     {
@@ -623,6 +681,74 @@ public class playerController : MonoBehaviour
         isTouchingWall = false;
     }
 
+
+    // Disables player collision while either car is airborne.
+    private void UpdatePlayerCollision()
+    {
+        if (otherPlayer == null)
+        {
+            playerController[] players =
+                FindObjectsByType<playerController>(FindObjectsSortMode.None);
+
+            foreach (playerController player in players)
+            {
+                if (player != this)
+                {
+                    otherPlayer = player;
+                    break;
+                }
+            }
+
+            if (otherPlayer == null)
+                return;
+        }
+
+        Collider otherCollider = otherPlayer.playerCollider;
+
+        if (otherCollider == null)
+            return;
+
+        // Replace these with the extended grounded booleans
+        // you already use for drifting.
+        bool thisGrounded = IsEffectivelyGrounded();
+        bool otherGrounded = otherPlayer.IsEffectivelyGrounded();
+
+        if (!thisGrounded || !otherGrounded)
+        {
+            bothGroundedTimer = 0f;
+
+            if (!ignoringPlayerCollision)
+            {
+                Physics.IgnoreCollision(
+                    playerCollider,
+                    otherCollider,
+                    true);
+
+                ignoringPlayerCollision = true;
+            }
+
+            return;
+        }
+
+        // Both cars must remain grounded briefly before collision returns.
+        bothGroundedTimer += Time.fixedDeltaTime;
+
+        if (ignoringPlayerCollision &&
+            bothGroundedTimer >= collisionRestoreDelay)
+        {
+            Physics.IgnoreCollision(
+                playerCollider,
+                otherCollider,
+                false);
+
+            ignoringPlayerCollision = false;
+        }
+    }
+
+    public bool IsEffectivelyGrounded()
+    {
+        return CanDriftOnGround();
+    }
 
     // Rotates the wheel and steering-wheel visuals to match steering input.
     void UpdateWheels()

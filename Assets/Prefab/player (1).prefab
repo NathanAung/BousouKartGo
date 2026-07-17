@@ -101,6 +101,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   safePositionSaveInterval: 0.5
+  boostHitUpwardForce: 4
+  boostHitForwardForce: 4
+  victimSpeedMultiplier: 0.5
+  attackerSpeedMultiplier: 0.9
   windParticles: {fileID: 2417801891796039507}
   windMinimumSpeed: 2.5
   driftSmokeLeftTurn1: {fileID: 6508458246974558287}
