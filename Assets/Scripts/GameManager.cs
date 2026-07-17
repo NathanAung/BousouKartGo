@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CameraFollow[] playerCameras;
     private List<Car> cars;
     private bool raceEnded = false;
+
+    [Header("LapUI")]
+    [SerializeField] private RectTransform lapP1;
+    [SerializeField] private RectTransform lapP2;
 
     [Header("End Sequence")]
     [SerializeField] private GameObject fireworkPrefab;
@@ -58,12 +63,15 @@ public class GameManager : MonoBehaviour
             {
                 car.lap.lapState = 0;
                 car.lap.lap += 1;
+                (car.name == "Car[0]" ? lapP1 : lapP2).position += Vector3.right * 40;
             }
 
             if (car.lap.lap >= lapsToWin && !raceEnded)
             {
                 // GAME WIN
                 //Debug.Break();
+                (car.name == "Car[0]" ? lapP1 : lapP2).gameObject.SetActive(false);
+
                 raceEnded = true;
                 winScreen.ShowWinner(car.id);
                 LaunchFireworks();

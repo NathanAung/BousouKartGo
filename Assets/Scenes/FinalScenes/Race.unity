@@ -1443,7 +1443,7 @@ GameObject:
   - component: {fileID: 514800636}
   - component: {fileID: 514800635}
   m_Layer: 5
-  m_Name: P2LapMarker1
+  m_Name: P2LapMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1465,7 +1465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00051212, y: 0.0019226}
+  m_AnchoredPosition: {x: -40, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &514800635
@@ -4023,6 +4023,8 @@ MonoBehaviour:
   playerCameras:
   - {fileID: 145724079}
   - {fileID: 907884816}
+  lapP1: {fileID: 1896685350}
+  lapP2: {fileID: 514800634}
   fireworkPrefab: {fileID: 1978689737715041617, guid: 907099b7731fcab4e9df5dd595a4f3c1, type: 3}
   fireworkSpawnPoints:
   - {fileID: 510353429}
@@ -5465,7 +5467,7 @@ GameObject:
   - component: {fileID: 1896685352}
   - component: {fileID: 1896685351}
   m_Layer: 5
-  m_Name: P1LapMarker0
+  m_Name: P1LapMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5487,7 +5489,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00051212, y: 0.0019226}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1896685351
