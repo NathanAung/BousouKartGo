@@ -1,9 +1,20 @@
 using UnityEngine;
 
-public class Resolution : MonoBehaviour
+public class ResolutionSetup : MonoBehaviour
 {
-    void Start()
+
+
+    private void Start()
     {
-        Screen.SetResolution(1920, 1080, false);
+        Resolution resolution = Screen.currentResolution;
+        Screen.SetResolution(
+            resolution.width,
+            resolution.height,
+            FullScreenMode.FullScreenWindow
+        );
     }
+    //void Start()
+    //{
+    //    Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+    //}
 }
