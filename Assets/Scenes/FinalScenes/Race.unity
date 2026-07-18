@@ -4323,7 +4323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86e06a06a0a290141993496c82862abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  debugMode: 1
+  debugMode: 0
   lapsToWin: 3
   carsPos:
   - {fileID: 1351295925}
