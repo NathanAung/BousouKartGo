@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 
 public class TitleScreen : MonoBehaviour
 {
@@ -28,5 +28,10 @@ public class TitleScreen : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void LoadRaceScene()
+    {
+        SceneManager.LoadScene(raceSceneName);
     }
 }

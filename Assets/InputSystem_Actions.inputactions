@@ -374,7 +374,7 @@
                 {
                     "name": "",
                     "id": "27242a1f-6be4-48d3-9d30-47f2085fdb61",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP1",
@@ -385,7 +385,7 @@
                 {
                     "name": "",
                     "id": "c904fee7-95ae-4351-83cb-82cc6852b897",
-                    "path": "<Keyboard>/enter",
+                    "path": "<Keyboard>/k",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP2",
@@ -407,7 +407,7 @@
                 {
                     "name": "",
                     "id": "229dd331-68a6-42bd-b011-2e675bc446fc",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP1",
@@ -418,7 +418,7 @@
                 {
                     "name": "",
                     "id": "afd28dfd-6d21-4821-880f-aa710af60c53",
-                    "path": "<Keyboard>/m",
+                    "path": "<Keyboard>/n",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP2",
@@ -484,7 +484,7 @@
                 {
                     "name": "negative",
                     "id": "fa6673fc-ace1-4671-be69-666388e4c271",
-                    "path": "<Keyboard>/o",
+                    "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP2",
@@ -495,7 +495,7 @@
                 {
                     "name": "positive",
                     "id": "7c7f4b65-83a8-4995-9867-39db98edf5e1",
-                    "path": "<Keyboard>/leftBracket",
+                    "path": "<Keyboard>/l",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardP2",
