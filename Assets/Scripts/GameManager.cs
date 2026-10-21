@@ -79,6 +79,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Keyboard.current != null &&
+        Keyboard.current.f1Key.wasPressedThisFrame)
+        {
+            raceStarted = false;
+            SceneManager.LoadScene(titleSceneName);
+            return;
+        }
+
         foreach (Car car in cars)
         {
             if (car.lap.lapState == 2)
